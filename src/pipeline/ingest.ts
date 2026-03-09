@@ -148,8 +148,60 @@ const SOURCE_DIRS = [
 ] as const;
 
 /**
+ * Recursively walk a directory, resolving symlinks so that
+ * symlinked subdirectories are traversed correctly.
+ */
+async function walkDir(dirPath: string): Promise<string[]> {
+  const results: string[] = [];
+
+  let resolvedPath: string;
+  try {
+    resolvedPath = await fs.realpath(dirPath);
+  } catch {
+    return results;
+  }
+
+  let names: string[];
+  try {
+    names = await fs.readdir(resolvedPath);
+  } catch {
+    return results;
+  }
+
+  for (const name of names) {
+    const fullPath = path.join(resolvedPath, name);
+    const stat = await fs.lstat(fullPath);
+    const entry = { name, isFile: () => stat.isFile(), isDirectory: () => stat.isDirectory(), isSymbolicLink: () => stat.isSymbolicLink() };
+
+    if (entry.isFile()) {
+      results.push(fullPath);
+    } else if (entry.isDirectory()) {
+      const nested = await walkDir(fullPath);
+      results.push(...nested);
+    } else if (entry.isSymbolicLink()) {
+      // Resolve symlink and check what it points to
+      try {
+        const realTarget = await fs.realpath(fullPath);
+        const stat = await fs.stat(realTarget);
+        if (stat.isFile()) {
+          results.push(realTarget);
+        } else if (stat.isDirectory()) {
+          const nested = await walkDir(realTarget);
+          results.push(...nested);
+        }
+      } catch {
+        // Broken symlink; skip
+      }
+    }
+  }
+
+  return results;
+}
+
+/**
  * Discover all ingestible files within a base sources directory.
  * Scans known subdirectories for supported file types.
+ * Follows symlinks so that linked source directories are traversed.
  * @param basePath - Root path to the sources directory
  * @returns Array of absolute file paths
  */
@@ -158,20 +210,8 @@ export async function discoverSources(basePath: string): Promise<string[]> {
 
   for (const dir of SOURCE_DIRS) {
     const dirPath = path.join(basePath, dir);
-    try {
-      const entries = await fs.readdir(dirPath, {
-        withFileTypes: true,
-        recursive: true,
-      });
-      for (const entry of entries) {
-        if (entry.isFile()) {
-          const fullPath = path.join(entry.parentPath ?? dirPath, entry.name);
-          discovered.push(fullPath);
-        }
-      }
-    } catch {
-      // Directory may not exist; skip silently
-    }
+    const files = await walkDir(dirPath);
+    discovered.push(...files);
   }
 
   return discovered;

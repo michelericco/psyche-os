@@ -15,7 +15,9 @@ export const twitterAdapter: SourceAdapter = {
 
   parse(filePath: string, raw: string) {
     const bookmarkPattern = /^- \[.+?\]\(https?:\/\/.+?\)/gm;
-    const topicPattern = /^## (.+?) \((\d+) bookmarks?\)/gm;
+    // Match both formats: "## Topic (N bookmarks)" and plain "## Topic"
+    // Excludes "Table of Contents" which is a structural heading
+    const topicPattern = /^## (?!Table of Contents)(.+?)(?:\s*\(\d+ bookmarks?\))?$/gm;
 
     const bookmarks = raw.match(bookmarkPattern) ?? [];
     const topics: string[] = [];
