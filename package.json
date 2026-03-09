@@ -21,7 +21,7 @@
   },
   "homepage": "https://github.com/michelericco/psyche-os#readme",
   "dependencies": {
-    "zod": "^3.23.0"
+    "zod": "^4.3.6"
   },
   "devDependencies": {
     "typescript": "^5.5.0",
