@@ -21,6 +21,8 @@ PSYCHE/OS reads exported chats, bookmarks, browsing traces, notes, and similar a
 
 The aim is not to romanticize personal data, but to make it readable with more care, structure, and agency than the usual profiling systems allow.
 
+That includes some of the sources people accumulate almost by accident: X bookmarks, YouTube `Watch Later`, long threads with Claude or ChatGPT, and local session histories from tools like Claude Code and Codex. In other words, a lot of the material you keep saving for "later" and almost never revisit.
+
 The core idea is simple:
 
 - use data that already describes your behavior
@@ -97,15 +99,23 @@ The current UI includes:
 
 Supported or partially supported today:
 
+- X/Twitter bookmarks via Siftly
+- selected Google Takeout exports, including useful YouTube traces such as watch history and `Watch Later` data when available in the export flow
+- long-form conversations with Claude.ai, ChatGPT, and Gemini through manual prompt handoff
 - Claude Code session histories
 - Codex CLI session histories
-- manual prompt handoff to Claude.ai, ChatGPT, and Gemini
-- X/Twitter bookmarks via Siftly
-- selected Google Takeout exports
+- adjacent CLI and agent-session workflows that can be normalized into the same extraction format
 
 Compatibility is still under active development. The long-term shape of the project assumes many more sources than the repo supports today, including notes, documents, tasks, repositories, quantified-self data, and additional chat/export formats.
 
 If a source can be exported, it can probably become a PSYCHE/OS adapter. Expanding that surface carefully is one of the highest-value areas for community contribution.
+
+More concretely, if any of these sound familiar, this repo is probably meant for you:
+
+- a deep archive of Claude or ChatGPT conversations you suspect says more about you than you remember
+- Claude Code or Codex sessions that capture how you think while building, debugging, and deciding
+- hundreds of X bookmarks that felt important enough to save, but not important enough to ever open again
+- a YouTube `Watch Later` queue that quietly became an accidental map of interests, aspirations, and unfinished lines of inquiry
 
 ## Quick Start
 
