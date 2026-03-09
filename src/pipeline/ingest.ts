@@ -1,6 +1,7 @@
 import { z } from "zod";
 import * as fs from "node:fs/promises";
 import * as path from "node:path";
+import { defaultRegistry } from "./adapters/index.js";
 
 // ---------------------------------------------------------------------------
 // Source Document schema
@@ -177,30 +178,39 @@ export async function discoverSources(basePath: string): Promise<string[]> {
 }
 
 /**
- * Ingest a single file into a SourceDocument.
+ * Ingest a single file into SourceDocument(s).
+ * Tries source-aware adapters first, falls back to generic parsers.
  * @param filePath - Absolute path to the file
- * @returns A validated SourceDocument
+ * @returns Array of validated SourceDocuments
  */
-export async function ingestFile(filePath: string): Promise<SourceDocument> {
-  const ext = path.extname(filePath);
+export async function ingestFile(filePath: string): Promise<SourceDocument[]> {
   const raw = await fs.readFile(filePath, "utf-8");
-  const parser = getParser(ext);
 
+  // Try source-aware adapter first
+  const adapter = defaultRegistry.findAdapter(filePath);
+  if (adapter) {
+    return adapter.parse(filePath, raw);
+  }
+
+  // Fall back to generic parser
+  const ext = path.extname(filePath);
+  const parser = getParser(ext);
   const id = `src_${path.basename(filePath, ext)}_${Date.now()}`;
 
   if (parser) {
     const partial = parser.parse(raw, filePath);
-    return SourceDocumentSchema.parse({ id, ...partial });
+    return [SourceDocumentSchema.parse({ id, ...partial })];
   }
 
-  // Fallback for unknown extensions
-  return SourceDocumentSchema.parse({
-    id,
-    sourcePath: filePath,
-    sourceType: "unknown",
-    sourceDir: path.basename(path.dirname(filePath)),
-    content: raw,
-  });
+  return [
+    SourceDocumentSchema.parse({
+      id,
+      sourcePath: filePath,
+      sourceType: "unknown",
+      sourceDir: path.basename(path.dirname(filePath)),
+      content: raw,
+    }),
+  ];
 }
 
 /**
@@ -215,8 +225,8 @@ export async function ingestAll(basePath: string): Promise<SourceDocument[]> {
 
   for (const file of files) {
     try {
-      const doc = await ingestFile(file);
-      results.push(doc);
+      const docs = await ingestFile(file);
+      results.push(...docs);
     } catch (err) {
       errors.push({
         file,
