@@ -1,18 +1,8 @@
-import {
-  RadarChart,
-  Radar,
-  PolarGrid,
-  PolarAngleAxis,
-  PolarRadiusAxis,
-  ResponsiveContainer,
-  Tooltip,
-} from 'recharts'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { dimensionalScores, DIMENSION_COLORS } from '../data/loader'
 import { getDimensionDelta } from '../data/timelineStore'
 import {
   SectionHead,
-  TwoCol,
   Expandable,
   DriftBadge,
 } from '../components/shared'
@@ -24,12 +14,6 @@ const STATUS_COLOR: Record<string, string> = {
   Emergente:    '#7a6a2a',
   'In tensione': '#9a3a28',
 }
-
-const radarData = Object.entries(dimensionalScores).map(([name, dim]) => ({
-  dimension: name,
-  score:     (dim.score ?? dim.depth ?? 0) * 100,
-  fullMark:  100,
-}))
 
 const dimensions = Object.entries(dimensionalScores).map(([name, dim]) => {
   const score      = dim.score ?? dim.depth ?? 0
@@ -43,91 +27,110 @@ const dimensions = Object.entries(dimensionalScores).map(([name, dim]) => {
 
 export default function DimensionsView() {
   const [selected, setSelected] = useState<string | null>(null)
+  const [rotation, setRotation] = useState(0)
+  // Animazione orbitale
+  useEffect(() => {
+    const interval = setInterval(() => setRotation(r => (r + 0.5) % 360), 40)
+    return () => clearInterval(interval)
+  }, [])
+
+  const centerX = 220
+  const centerY = 220
+  const radius = 140
+  const getPos = (i: number, total: number) => {
+    const angle = (i * 360 / total + rotation) * (Math.PI / 180)
+    return {
+      x: centerX + Math.cos(angle) * radius,
+      y: centerY + Math.sin(angle) * radius,
+    }
+  }
 
   const sel = selected ? dimensions.find(d => d.name === selected) : null
+
+  // Fallback se non ci sono dimensioni
+  if (!dimensions || dimensions.length === 0) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[40vh]">
+        <SectionHead title="Dimensional Map" explanation="Mappa orbitale interattiva" />
+        <div className="text-lg text-[color:var(--ink-faint)] mt-10">Nessuna dimensione disponibile. Controlla i dati o la pipeline.</div>
+      </div>
+    )
+  }
 
   return (
     <div className="space-y-10">
       <SectionHead
-        title="Dimensional Profile"
-        explanation="PSYCHE/OS analyzes identity across 6 dimensions derived from established psychological, sociological, and anthropological frameworks. Scores reflect cross-source convergence, not absolute measurement."
+        title="Dimensional Map"
+        explanation="Mappa orbitale interattiva: clicca su una dimensione per dettagli."
       />
-
-      <TwoCol
-        left={
-          <div className="mx-auto max-w-lg">
-            <ResponsiveContainer width="100%" height={340}>
-              <RadarChart data={radarData} cx="50%" cy="50%" outerRadius="75%">
-                <PolarGrid stroke="#cdbdad" />
-                <PolarAngleAxis dataKey="dimension" tick={{ fill: '#7f7264', fontSize: 11 }} />
-                <PolarRadiusAxis
-                  angle={90} domain={[0, 100]}
-                  tick={{ fill: '#96897c', fontSize: 10 }} axisLine={false}
+      <div className="flex flex-col items-center">
+        <svg width={440} height={440} style={{ margin: '0 auto', display: 'block' }}>
+          <defs>
+            <radialGradient id="psyche-center" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stopColor="#f3e8ff" stopOpacity="1" />
+              <stop offset="100%" stopColor="#a78bfa" stopOpacity="0.7" />
+            </radialGradient>
+          </defs>
+          <circle cx={centerX} cy={centerY} r={54} fill="url(#psyche-center)" stroke="#a78bfa" strokeWidth={3} />
+          <text x={centerX} y={centerY+6} textAnchor="middle" fontSize="1.5rem" fontWeight="bold" fill="#7c3aed">PSYCHE</text>
+          <circle cx={centerX} cy={centerY} r={radius} fill="none" stroke="#ede9fe" strokeDasharray="4 6" />
+          {dimensions.map((dim, i) => {
+            const { x, y } = getPos(i, dimensions.length)
+            const isSelected = selected === dim.name
+            return (
+              <g key={dim.name} style={{ cursor: 'pointer' }}
+                onClick={() => setSelected(dim.name)}
+              >
+                <circle
+                  cx={x}
+                  cy={y}
+                  r={isSelected ? 38 : 26}
+                  fill={dim.color}
+                  fillOpacity={isSelected ? 0.22 : 0.13}
+                  stroke={dim.statusColor}
+                  strokeWidth={isSelected ? 5 : 2}
+                  style={{ filter: isSelected ? 'drop-shadow(0 0 8px #a78bfa88)' : 'none', transition: 'all 0.18s cubic-bezier(.4,2,.6,1)' }}
                 />
-                <Tooltip
-                  contentStyle={{
-                    backgroundColor: '#fbf7f1', border: '1px solid #d3c4b6',
-                    borderRadius: '6px', color: '#4d4339', fontSize: '12px',
-                  }}
-                  formatter={(v) => [`${Number(v ?? 0).toFixed(0)}%`, 'Score']}
+                <circle
+                  cx={x+30}
+                  cy={y-30}
+                  r={10}
+                  fill={dim.statusColor}
+                  stroke="#fff"
+                  strokeWidth={2}
                 />
-                <Radar
-                  name="Score" dataKey="score"
-                  stroke="#9f4a34" fill="#9f4a34" fillOpacity={0.08} strokeWidth={1.5}
-                />
-              </RadarChart>
-            </ResponsiveContainer>
-          </div>
-        }
-        right={
-          <div className="space-y-5">
-            <p className="text-sm leading-relaxed text-[color:var(--ink-soft)]">
-              The radar chart shows your dimensional profile across six
-              psychological axes. Each axis is scored from 0–100% based on
-              cross-source evidence convergence.
-            </p>
-            {/* Selected dimension detail */}
-            {sel && (
-              <div className="space-y-3 pt-3 border-t border-[color:var(--line)]">
-                <div className="flex items-center gap-2 flex-wrap">
-                  <span className="font-semibold text-sm" style={{ color: sel.color }}>
-                    {sel.name}
-                  </span>
-                  <span
-                    className="px-2 py-0.5 rounded text-xs font-medium text-white"
-                    style={{ backgroundColor: sel.statusColor }}
-                  >
-                    {sel.status}
-                  </span>
-                  <DriftBadge delta={getDimensionDelta(sel.name)?.scoreDelta} />
-                </div>
-                <div className="flex items-center gap-2">
-                  <span className="block h-1.5 w-28 rounded-full bg-[color:var(--panel)] overflow-hidden">
-                    <span
-                      className="block h-full rounded-full"
-                      style={{ width: `${sel.score * 100}%`, backgroundColor: sel.color }}
-                    />
-                  </span>
-                  <span className="text-xs tabular-nums">{Math.round(sel.score * 100)}%</span>
-                </div>
-                {sel.convergence && (
-                  <p className="text-xs text-[color:var(--ink-soft)] leading-relaxed">{sel.convergence}</p>
-                )}
-                {sel.blindSpot && (
-                  <div className="border-l-2 border-amber-500/40 pl-3">
-                    <span className="text-xs font-medium uppercase tracking-wider text-amber-500/70">
-                      Blind Spot
-                    </span>
-                    <p className="mt-0.5 text-xs text-[color:var(--ink-soft)] leading-relaxed">
-                      {sel.blindSpot}
-                    </p>
-                  </div>
-                )}
+                <text x={x+30} y={y-26} textAnchor="middle" fontSize="0.8rem" fontWeight="bold" fill="#fff">{dim.status[0]}</text>
+                <text x={x} y={y+6} textAnchor="middle" fontSize={isSelected ? '1.5rem' : '1.1rem'} fontWeight="bold" fill="#312e81">{dim.name.slice(0,2).toUpperCase()}</text>
+              </g>
+            )
+          })}
+        </svg>
+        {/* Dettaglio sotto la mappa */}
+        {sel && (
+          <div className="space-y-3 pt-6 w-full max-w-xl animate-fadein">
+            <div className="flex items-center gap-2 flex-wrap">
+              <span className="font-semibold text-lg" style={{ color: sel.color }}>{sel.name}</span>
+              <span className="px-2 py-0.5 rounded text-xs font-medium text-white" style={{ backgroundColor: sel.statusColor }}>{sel.status}</span>
+              <DriftBadge delta={getDimensionDelta(sel.name)?.scoreDelta} />
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="block h-1.5 w-32 rounded-full bg-[color:var(--panel)] overflow-hidden">
+                <span className="block h-full rounded-full" style={{ width: `${sel.score * 100}%`, backgroundColor: sel.color }} />
+              </span>
+              <span className="text-xs tabular-nums">{Math.round(sel.score * 100)}%</span>
+            </div>
+            {sel.convergence && (
+              <p className="text-xs text-[color:var(--ink-soft)] leading-relaxed">{sel.convergence}</p>
+            )}
+            {sel.blindSpot && (
+              <div className="border-l-2 border-amber-500/40 pl-3">
+                <span className="text-xs font-medium uppercase tracking-wider text-amber-500/70">Blind Spot</span>
+                <span className="block text-xs text-[color:var(--ink-soft)]">{sel.blindSpot}</span>
               </div>
             )}
           </div>
-        }
-      />
+        )}
+      </div>
 
       {/* Dimension list */}
       <div className="space-y-0 mt-6">

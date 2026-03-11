@@ -97,6 +97,13 @@ echo "Extraction prompt copied to clipboard"`,
 
 const PIPELINE_STEPS: readonly PipelineStep[] = [
   {
+    id: 'run-full-pipeline',
+    phase: 0,
+    name: 'Run: Full Pipeline',
+    command: 'bash scripts/run-full-pipeline.sh',
+    note: 'Recommended default. Executes extraction + synthesis + neurodivergence in one flow.',
+  },
+  {
     id: 'extract-claude-sessions',
     phase: 1,
     name: 'Extract: Claude Sessions',

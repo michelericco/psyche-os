@@ -1,5 +1,6 @@
 import { useState, useEffect, lazy, Suspense } from 'react'
 import type { ViewId } from './data/types'
+import { useI18n } from './i18n'
 
 const DashboardView = lazy(() => import('./views/DashboardView'))
 const OnboardingView = lazy(() => import('./views/OnboardingView'))
@@ -18,26 +19,27 @@ const IntegrationView = lazy(() => import('./views/IntegrationView'))
 const ProgressDiaryView = lazy(() => import('./views/ProgressDiaryView'))
 const TimelineView      = lazy(() => import('./views/TimelineView'))
 
-const NAV_ITEMS: { id: ViewId; label: string; note: string }[] = [
-  { id: 'dashboard', label: 'Dashboard', note: 'Your personal home & next steps' },
-  { id: 'sources', label: 'Setup', note: 'Connect data & run pipeline' },
-  { id: 'overview', label: 'Overview', note: 'System map and structure' },
-  { id: 'genome', label: 'Genome', note: 'Cognitive primitives and metabolism' },
-  { id: 'dimensions', label: 'Dimensions', note: 'Six-axis profile' },
-  { id: 'patterns', label: 'Patterns', note: 'Cross-validated behavioral signals' },
-  { id: 'archetypes', label: 'Archetypes', note: 'Dominant psychic figures' },
-  { id: 'potentials', label: 'Potentials', note: 'Latent capacities and constraints' },
-  { id: 'narrative', label: 'Narrative', note: 'Story arc and current tension' },
-  { id: 'insights', label: 'Insights', note: 'Development vectors' },
-  { id: 'iq', label: 'IQ Estimate', note: 'Behavioral intelligence estimate' },
-  { id: 'neurodivergence', label: 'Neurodivergence', note: 'Evidence-based screening, not diagnosis' },
-  { id: 'map', label: 'Semantic Map', note: 'Relationship graph and vector search' },
-  { id: 'integration', label: 'Integration', note: 'Export, prompts, and MCP bridge' },
-  { id: 'diary',     label: 'Progress Diary', note: 'Daily progress tracking and reflections' },
-  { id: 'timeline',  label: 'Timeline',       note: 'Stratification drift across pipeline runs' },
+const NAV_ITEMS: { id: ViewId; key: string }[] = [
+  { id: 'dashboard', key: 'dashboard' },
+  { id: 'sources', key: 'sources' },
+  { id: 'overview', key: 'overview' },
+  { id: 'genome', key: 'genome' },
+  { id: 'dimensions', key: 'dimensions' },
+  { id: 'patterns', key: 'patterns' },
+  { id: 'archetypes', key: 'archetypes' },
+  { id: 'potentials', key: 'potentials' },
+  { id: 'narrative', key: 'narrative' },
+  { id: 'insights', key: 'insights' },
+  { id: 'iq', key: 'iq' },
+  { id: 'neurodivergence', key: 'neurodivergence' },
+  { id: 'map', key: 'map' },
+  { id: 'integration', key: 'integration' },
+  { id: 'diary', key: 'diary' },
+  { id: 'timeline', key: 'timeline' },
 ]
 
 function App() {
+  const { t, language, setLanguage, languages, isRTL } = useI18n()
   const [activeView, setActiveView] = useState<ViewId>('sources')
   const activeItem = NAV_ITEMS.find(item => item.id === activeView) ?? NAV_ITEMS[0]
 
@@ -57,23 +59,35 @@ function App() {
   // on dashboard we hide sidebar and center content; allow the panel to grow
 
   return (
-    <div className="app-shell">
+    <div className="app-shell" dir={isRTL ? 'rtl' : 'ltr'}>
       {!isDashboard && (
         <aside className="app-sidebar">
           <div className="app-sidebar-inner">
             <header>
-              <div className="app-kicker">Digital psyche operating system</div>
+              <div className="app-kicker">{t('app.kicker')}</div>
               <h1 className="app-brand">
                 <span className="app-brand-accent">PSYCHE</span>
                 <span className="app-brand-divider">/</span>
                 <span>OS</span>
               </h1>
               <p className="app-brand-note">
-                "Until you make the unconscious conscious,
-                <br />
-                it will direct your life and you will call it fate."
+                "{t('app.quote')}"
                 <span className="app-brand-attribution">C.G. Jung</span>
               </p>
+              <div className="app-language-wrap">
+                <select
+                  className="app-language-select"
+                  value={language}
+                  onChange={e => setLanguage(e.target.value as typeof language)}
+                  aria-label="Language"
+                >
+                  {languages.map(lang => (
+                    <option key={lang.code} value={lang.code}>
+                      {lang.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
             </header>
 
             <nav className="app-nav" aria-label="Primary">
@@ -85,8 +99,8 @@ function App() {
                 >
                   <span className="app-nav-index">{String(index + 1).padStart(2, '0')}</span>
                   <span className="app-nav-copy">
-                    <span className="app-nav-label">{item.label}</span>
-                    <span className="app-nav-note">{item.note}</span>
+                    <span className="app-nav-label">{t(`app.nav.${item.key}.label`)}</span>
+                    <span className="app-nav-note">{t(`app.nav.${item.key}.note`)}</span>
                   </span>
                 </button>
               ))}
@@ -100,16 +114,16 @@ function App() {
           <header className="app-main-header">
             <div className="app-main-header-inner">
               <div>
-                <div className="app-kicker">Current view</div>
-                <h2 className="app-view-title">{activeItem.label}</h2>
+                <div className="app-kicker">{t('app.currentView')}</div>
+                <h2 className="app-view-title">{t(`app.nav.${activeItem.key}.label`)}</h2>
               </div>
-              <p className="app-view-note">{activeItem.note}</p>
+              <p className="app-view-note">{t(`app.nav.${activeItem.key}.note`)}</p>
             </div>
           </header>
         )}
 
         <div className="app-main-frame">
-          <Suspense fallback={<div className="app-loading">Loading section</div>}>
+          <Suspense fallback={<div className="app-loading">{t('app.loading')}</div>}>
             <section className="view-shell">
               {activeView === 'dashboard' && <DashboardView />}
               {activeView === 'sources' && <OnboardingView />}
