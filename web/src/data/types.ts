@@ -194,6 +194,7 @@ export interface Synthesis {
   directionalVector?: DirectionalVector
   modelLimitations?: string[]
   simulacrumIndex?: number
+  sensorData?: SensorialData[] // <--- AGGIUNTO QUI
 }
 
 /** A single neurodivergence dimension with behavioral evidence */
@@ -214,7 +215,7 @@ export interface NeurodivergenceIndicator {
   references: { author: string; work: string; year: string; detail: string }[]
 }
 
-export type ViewId = 'dashboard' | 'sources' | 'overview' | 'genome' | 'patterns' | 'archetypes' | 'dimensions' | 'potentials' | 'narrative' | 'insights' | 'iq' | 'neurodivergence' | 'map' | 'integration' | 'diary' | 'timeline'
+export type ViewId = 'dashboard' | 'sources' | 'overview' | 'genome' | 'patterns' | 'archetypes' | 'dimensions' | 'potentials' | 'narrative' | 'insights' | 'iq' | 'neurodivergence' | 'map' | 'integration' | 'diary' | 'timeline' | 'sensorial' | 'sensOrial';
 
 // ── Temporal stratification ────────────────────────────────────────
 
@@ -274,4 +275,19 @@ export interface SynthesisSnapshot {
 export interface SynthesisTimeline {
   snapshots: SynthesisSnapshot[]
   activeId:  string
+}
+
+// ── Sensorial Data ─────────────────────────────────────────────
+export interface SensorialData {
+  timestamp: string
+  source: string // es: "Apple Watch", "Fitbit", "Oura Ring"
+  heartRate?: number
+  steps?: number
+  sleepHours?: number
+  hrv?: number
+  calories?: number
+  oxygenSaturation?: number
+  temperature?: number
+  stressLevel?: number
+  raw?: Record<string, any>
 }

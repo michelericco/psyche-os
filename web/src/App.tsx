@@ -18,6 +18,8 @@ const SemanticMapView = lazy(() => import('./views/SemanticMapView'))
 const IntegrationView = lazy(() => import('./views/IntegrationView'))
 const ProgressDiaryView = lazy(() => import('./views/ProgressDiaryView'))
 const TimelineView      = lazy(() => import('./views/TimelineView'))
+const SensorialView = lazy(() => import('./views/SensorialView'))
+const ContactView = lazy(() => import('./views/ContactView'))
 
 const NAV_ITEMS: { id: ViewId; key: string }[] = [
   { id: 'dashboard', key: 'dashboard' },
@@ -36,6 +38,8 @@ const NAV_ITEMS: { id: ViewId; key: string }[] = [
   { id: 'integration', key: 'integration' },
   { id: 'diary', key: 'diary' },
   { id: 'timeline', key: 'timeline' },
+  { id: 'sensorial', key: 'Sensorial' },
+  { id: 'sensOrial', key: 'Contact' },
 ]
 
 function App() {
@@ -59,7 +63,7 @@ function App() {
   // on dashboard we hide sidebar and center content; allow the panel to grow
 
   return (
-    <div className="app-shell" dir={isRTL ? 'rtl' : 'ltr'}>
+    <div className={`app-shell${isDashboard ? ' is-dashboard' : ''}`} dir={isRTL ? 'rtl' : 'ltr'} style={{ fontFamily: '"Inter var", "SF Pro Display", "Segoe UI", "Helvetica Neue", Arial, sans-serif', fontFeatureSettings: '"ss01" on, "ss02" on', letterSpacing: '0.01em', fontVariationSettings: '"wght" 500, "slnt" 0' }}>
       {!isDashboard && (
         <aside className="app-sidebar">
           <div className="app-sidebar-inner">
@@ -79,7 +83,7 @@ function App() {
                   className="app-language-select"
                   value={language}
                   onChange={e => setLanguage(e.target.value as typeof language)}
-                  aria-label="Language"
+                  aria-label={t('app.language')}
                 >
                   {languages.map(lang => (
                     <option key={lang.code} value={lang.code}>
@@ -90,17 +94,32 @@ function App() {
               </div>
             </header>
 
-            <nav className="app-nav" aria-label="Primary">
+            <nav className="app-nav" aria-label={t('app.primaryNavigation')}>
               {NAV_ITEMS.map((item, index) => (
                 <button
                   key={item.id}
                   onClick={() => setActiveView(item.id)}
                   className={`app-nav-button ${activeView === item.id ? 'is-active' : ''}`}
+                  style={{
+                    fontFamily: '"Inter var", "SF Pro Display", "Segoe UI", "Helvetica Neue", Arial, sans-serif',
+                    fontVariationSettings: '"wght" 600, "slnt" 0',
+                    fontSize: '1.08rem',
+                    letterSpacing: '0.01em',
+                    transition: 'all 0.22s cubic-bezier(.4,1.4,.6,1)',
+                    color: activeView === item.id ? 'var(--accent)' : 'var(--ink)',
+                    background: activeView === item.id ? 'rgba(0,0,0,0.04)' : 'transparent',
+                    borderRadius: '1.2em',
+                    boxShadow: activeView === item.id ? '0 2px 12px 0 rgba(0,0,0,0.07)' : 'none',
+                    fontWeight: activeView === item.id ? 700 : 500,
+                    transform: activeView === item.id ? 'scale(1.06)' : 'scale(1)',
+                  }}
+                  onMouseEnter={e => e.currentTarget.style.transform = 'scale(1.09)'}
+                  onMouseLeave={e => e.currentTarget.style.transform = activeView === item.id ? 'scale(1.06)' : 'scale(1)'}
                 >
-                  <span className="app-nav-index">{String(index + 1).padStart(2, '0')}</span>
+                  <span className="app-nav-index" style={{ opacity: 0.7, fontWeight: 400 }}>{String(index + 1).padStart(2, '0')}</span>
                   <span className="app-nav-copy">
-                    <span className="app-nav-label">{t(`app.nav.${item.key}.label`)}</span>
-                    <span className="app-nav-note">{t(`app.nav.${item.key}.note`)}</span>
+                    <span className="app-nav-label" style={{ letterSpacing: '0.01em', fontWeight: 600 }}>{t(`app.nav.${item.key}.label`)}</span>
+                    <span className="app-nav-note" style={{ fontWeight: 400, opacity: 0.6 }}>{t(`app.nav.${item.key}.note`)}</span>
                   </span>
                 </button>
               ))}
@@ -141,6 +160,8 @@ function App() {
               {activeView === 'integration' && <IntegrationView />}
               {activeView === 'diary'     && <ProgressDiaryView />}
               {activeView === 'timeline'  && <TimelineView />}
+              {activeView === 'sensorial' && <SensorialView />}
+              {activeView === 'sensOrial' && <ContactView />}
             </section>
           </Suspense>
         </div>

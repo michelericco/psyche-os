@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import '../index.css'
+import { useI18n, type LanguageCode } from '../i18n'
 
 interface DailyEntry {
   date: string
@@ -16,6 +17,7 @@ interface ProgressDiary {
 }
 
 export default function ProgressDiaryView() {
+  const { t, language } = useI18n()
   const [diary, setDiary] = useState<ProgressDiary>({ entries: [] })
   const [newEntry, setNewEntry] = useState({ title: '', content: '', mood: '', tags: '' })
   const [isEditing, setIsEditing] = useState(false)
@@ -40,7 +42,7 @@ export default function ProgressDiaryView() {
 
   const handleAddEntry = () => {
     if (!newEntry.title || !newEntry.content) {
-      alert('Titolo e contenuto sono obbligatori')
+      alert(t('diary.required'))
       return
     }
 
@@ -100,7 +102,15 @@ export default function ProgressDiaryView() {
 
   const formatDate = (dateStr: string) => {
     const date = new Date(dateStr)
-    return date.toLocaleDateString('it-IT', {
+    const localeByLang: Record<LanguageCode, string> = {
+      en: 'en-GB',
+      it: 'it-IT',
+      fr: 'fr-FR',
+      zh: 'zh-CN',
+      ru: 'ru-RU',
+      ar: 'ar-SA',
+    }
+    return date.toLocaleDateString(localeByLang[language], {
       weekday: 'long',
       year: 'numeric',
       month: 'long',
@@ -122,18 +132,20 @@ export default function ProgressDiaryView() {
     return moods[mood?.toLowerCase() || ''] || ''
   }
 
+  const moodKeys = ['energico', 'felice', 'tranquillo', 'concentrato', 'stressato', 'confuso', 'motivato', 'neutro'] as const
+
   return (
     <div className="view-container">
       <div className="view-header">
-        <h1>📔 Diario dei Progressi</h1>
-        <p className="subtitle">Traccia i tuoi progressi giorno dopo giorno</p>
+        <h1>📔 {t('diary.title')}</h1>
+        <p className="subtitle">{t('diary.subtitle')}</p>
       </div>
 
       <div className="content-area">
         {/* Add/Edit Entry Form */}
         <div className="card card-accent" style={{ marginBottom: '2rem' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
-            <h2>{isEditing ? 'Modifica voce' : 'Nuova voce'}</h2>
+            <h2>{isEditing ? t('diary.editEntry') : t('diary.newEntry')}</h2>
             {isEditing && (
               <button
                 className="button-secondary"
@@ -143,16 +155,16 @@ export default function ProgressDiaryView() {
                   setNewEntry({ title: '', content: '', mood: '', tags: '' })
                 }}
               >
-                Annulla
+                {t('diary.cancel')}
               </button>
             )}
           </div>
 
           <div style={{ marginBottom: '1rem' }}>
-              <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 'bold', fontSize: '1.05rem' }}>Titolo</label>
+              <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 'bold', fontSize: '1.05rem' }}>{t('diary.titleLabel')}</label>
             <input
               type="text"
-              placeholder="Es: Ho completato il refactoring della pipeline"
+              placeholder={t('diary.titlePlaceholder')}
               value={newEntry.title}
               onChange={(e) => setNewEntry({ ...newEntry, title: e.target.value })}
               style={{
@@ -167,9 +179,9 @@ export default function ProgressDiaryView() {
           </div>
 
           <div style={{ marginBottom: '1rem' }}>
-            <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 'bold', fontSize: '1.05rem' }}>Contenuto</label>
+            <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 'bold', fontSize: '1.05rem' }}>{t('diary.contentLabel')}</label>
             <textarea
-              placeholder="Descrivi i dettagli della giornata, gli ostacoli superati, i progressi fatti..."
+              placeholder={t('diary.contentPlaceholder')}
               value={newEntry.content}
               onChange={(e) => setNewEntry({ ...newEntry, content: e.target.value })}
               rows={5}
@@ -188,7 +200,7 @@ export default function ProgressDiaryView() {
 
           <div style={{ marginBottom: '1rem', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
             <div>
-              <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 'bold', fontSize: '1.05rem' }}>Stato emotivo</label>
+              <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 'bold', fontSize: '1.05rem' }}>{t('diary.moodLabel')}</label>
               <select
                 value={newEntry.mood}
                 onChange={(e) => setNewEntry({ ...newEntry, mood: e.target.value })}
@@ -201,23 +213,18 @@ export default function ProgressDiaryView() {
                   backgroundColor: 'var(--colors-neutral-surface)',
                 }}
               >
-                <option value="">Scegli uno stato</option>
-                <option value="energico">⚡ Energico</option>
-                <option value="felice">😊 Felice</option>
-                <option value="tranquillo">😌 Tranquillo</option>
-                <option value="concentrato">🎯 Concentrato</option>
-                <option value="stressato">😰 Stressato</option>
-                <option value="confuso">😕 Confuso</option>
-                <option value="motivato">🔥 Motivato</option>
-                <option value="neutro">😐 Neutro</option>
+                <option value="">{t('diary.moodPlaceholder')}</option>
+                {moodKeys.map((key) => (
+                  <option key={key} value={key}>{`${getMoodEmoji(key)} ${t(`diary.mood.${key}`)}`}</option>
+                ))}
               </select>
             </div>
 
             <div>
-              <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 'bold', fontSize: '1.05rem' }}>Tag (separati da virgola)</label>
+              <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 'bold', fontSize: '1.05rem' }}>{t('diary.tagsLabel')}</label>
               <input
                 type="text"
-                placeholder="Es: pipeline, refactoring, testing"
+                placeholder={t('diary.tagsPlaceholder')}
                 value={newEntry.tags}
                 onChange={(e) => setNewEntry({ ...newEntry, tags: e.target.value })}
                 style={{
@@ -237,7 +244,7 @@ export default function ProgressDiaryView() {
             onClick={handleAddEntry}
             style={{ width: '100%' }}
           >
-            {editingIndex !== null ? '✓ Aggiorna voce' : '+ Aggiungi voce'}
+            {editingIndex !== null ? `✓ ${t('diary.updateEntry')}` : `+ ${t('diary.addEntry')}`}
           </button>
         </div>
 
@@ -249,15 +256,15 @@ export default function ProgressDiaryView() {
                 {diary.entries.length}
               </div>
               <div style={{ fontSize: '0.9rem', color: 'var(--colors-neutral-muted)' }}>
-                Voci totali
+                {t('diary.totalEntries')}
               </div>
             </div>
             <div className="card" style={{ textAlign: 'center', padding: '1rem' }}>
               <div style={{ fontSize: '2rem', fontWeight: 'bold', color: 'var(--colors-primary-text)' }}>
-                {diary.lastUpdated ? formatDate(diary.lastUpdated).split(' ')[0] : 'N/A'}
+                {diary.lastUpdated ? formatDate(diary.lastUpdated).split(' ')[0] : t('diary.noDate')}
               </div>
               <div style={{ fontSize: '0.9rem', color: 'var(--colors-neutral-muted)' }}>
-                Ultimo aggiornamento
+                {t('diary.lastUpdate')}
               </div>
             </div>
           </div>
@@ -267,7 +274,7 @@ export default function ProgressDiaryView() {
         <div style={{ display: 'grid', gap: '1.5rem' }}>
           {diary.entries.length === 0 ? (
             <div className="card" style={{ textAlign: 'center', padding: '3rem', opacity: 0.6 }}>
-              <p style={{ fontSize: '1.1rem' }}>Inizia il tuo diario dei progressi oggi! 📝</p>
+              <p style={{ fontSize: '1.1rem' }}>{t('diary.emptyState')} 📝</p>
             </div>
           ) : (
             diary.entries.map((entry, index) => (
@@ -277,7 +284,7 @@ export default function ProgressDiaryView() {
                     <h3 style={{ margin: '0 0 0.5rem 0' }}>{entry.title}</h3>
                     <p style={{ margin: 0, fontSize: '0.9rem', color: 'var(--colors-neutral-muted)' }}>
                       {formatDate(entry.date)}
-                      {entry.mood && ` • ${getMoodEmoji(entry.mood)} ${entry.mood}`}
+                      {entry.mood && ` • ${getMoodEmoji(entry.mood)} ${t(`diary.mood.${entry.mood.toLowerCase()}`)}`}
                     </p>
                   </div>
                   <div style={{ display: 'flex', gap: '0.5rem' }}>
@@ -286,14 +293,14 @@ export default function ProgressDiaryView() {
                       onClick={() => handleEditEntry(index)}
                       style={{ padding: '0.5rem 1rem', fontSize: '0.9rem' }}
                     >
-                      ✎ Modifica
+                      ✎ {t('diary.edit')}
                     </button>
                     <button
                       className="button-danger"
                       onClick={() => handleDeleteEntry(index)}
                       style={{ padding: '0.5rem 1rem', fontSize: '0.9rem' }}
                     >
-                      🗑 Elimina
+                      🗑 {t('diary.delete')}
                     </button>
                   </div>
                 </div>

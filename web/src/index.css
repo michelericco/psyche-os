@@ -1,14 +1,42 @@
-@import "tailwindcss";
+.app-nav-button {
+  /* ...existing code... */
+  will-change: transform, box-shadow, background, color;
+}
 
-:root {
-  --paper: #edf3f5;
-  --paper-strong: #f8fcfd;
-  --panel: rgba(236, 245, 247, 0.9);
-  --panel-soft: rgba(229, 240, 246, 0.78);
-  --line: rgba(66, 91, 99, 0.14);
-  --line-strong: rgba(66, 91, 99, 0.26);
-  --ink: #1d2a2f;
-  --ink-soft: #42565f;
+.app-nav-button:hover:not(.is-active) {
+  background: rgba(0,0,0,0.03);
+  color: var(--accent);
+  box-shadow: 0 2px 8px 0 rgba(0,0,0,0.04);
+  transform: scale(1.07) rotate(-0.5deg);
+  transition: all 0.18s cubic-bezier(.5,1.7,.6,1.1);
+}
+
+h1, h2, h3, h4, h5, h6 {
+  /* ...existing code... */
+  position: relative;
+  overflow: visible;
+}
+
+h1:hover, h2:hover, h3:hover, h4:hover, h5:hover, h6:hover {
+  color: var(--accent);
+  text-shadow: 0 2px 16px rgba(0,0,0,0.08), 0 1px 0 var(--accent);
+  letter-spacing: 0.03em;
+  transition: color 0.18s cubic-bezier(.5,1.7,.6,1.1), text-shadow 0.18s cubic-bezier(.5,1.7,.6,1.1), letter-spacing 0.18s cubic-bezier(.5,1.7,.6,1.1);
+}
+@import "tailwindcss";
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  font-family: 'Inter var', 'SF Pro Display', 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+  font-feature-settings: 'ss01' on, 'ss02' on;
+  font-variation-settings: 'wght' 500, 'slnt' 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-size: 16px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  transition: background 0.3s cubic-bezier(.4,1.4,.6,1), color 0.3s cubic-bezier(.4,1.4,.6,1);
+}
   --ink-faint: #6a8088;
   --accent: #89aebd;
   --accent-strong: #688b99;
@@ -32,7 +60,7 @@ body {
   min-height: 100%;
   color: var(--ink);
   font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", system-ui, sans-serif;
-  font-size: 1.125rem;
+  font-size: 1.2rem;
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
@@ -106,7 +134,7 @@ pre,
 /* ── Kicker ────────────────────────────────────────────────────────── */
 
 .app-kicker {
-  font-size: 0.69rem;
+  font-size: 0.78rem;
   letter-spacing: 0.18em;
   text-transform: uppercase;
   font-weight: 600;
@@ -148,7 +176,7 @@ pre,
 .app-brand-attribution {
   display: block;
   margin-top: 0.4rem;
-  font-size: 0.68rem;
+  font-size: 0.76rem;
   letter-spacing: 0.18em;
   text-transform: uppercase;
   font-weight: 600;
@@ -214,7 +242,7 @@ pre,
 
 .app-nav-index {
   padding-top: 0.12rem;
-  font-size: 0.7rem;
+  font-size: 0.78rem;
   letter-spacing: 0.22em;
   text-transform: uppercase;
   font-weight: 600;
@@ -228,7 +256,7 @@ pre,
 
 .app-nav-label {
   display: block;
-  font-size: 0.95rem;
+  font-size: 1rem;
   font-weight: 560;
 }
 
@@ -236,7 +264,7 @@ pre,
   display: block;
   margin-top: 0.1rem;
   color: var(--ink-faint);
-  font-size: 0.78rem;
+  font-size: 0.86rem;
   line-height: 1.3;
 }
 
@@ -304,7 +332,7 @@ pre,
   margin: 0;
   max-width: 26rem;
   color: var(--ink-soft);
-  font-size: 0.9rem;
+  font-size: 1rem;
   line-height: 1.55;
 }
 
@@ -319,16 +347,16 @@ pre,
 .dashboard-mode {
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  align-items: center; /* center content horizontally */
+  justify-content: flex-start;
+  align-items: stretch;
   min-height: 100vh;
 }
 
 .dashboard-mode .app-main-frame {
-  padding-top: 0;
-  padding-bottom: 0;
-  width: 100%; /* allow frame to stretch across viewport */
-  max-width: none; /* remove cap so dashboard fills available space */
+  padding-top: 1.5rem;
+  padding-bottom: 2.5rem;
+  width: min(100%, var(--frame-width));
+  max-width: var(--frame-width);
   padding-left: 2rem;
   padding-right: 2rem;
 }
@@ -338,7 +366,7 @@ pre,
 .app-loading {
   padding: 3rem 0;
   color: var(--ink-faint);
-  font-size: 0.8rem;
+  font-size: 0.92rem;
   letter-spacing: 0.2em;
   text-transform: uppercase;
 }
@@ -355,6 +383,130 @@ pre,
 
 .card:hover {
   box-shadow: var(--shadow-hover);
+}
+
+/* ── Liquid Glass (Dashboard) ─────────────────────────────────────── */
+
+.liquid-glass-panel,
+.liquid-glass-card,
+.liquid-glass-chip,
+.liquid-glass-input {
+  position: relative;
+  backdrop-filter: blur(var(--lg-blur, 12px)) saturate(var(--lg-sat, 1.14));
+  -webkit-backdrop-filter: blur(var(--lg-blur, 12px)) saturate(var(--lg-sat, 1.14));
+}
+
+.liquid-glass-panel,
+.liquid-glass-card {
+  border: 1px solid var(--lg-border, rgba(255, 255, 255, 0.4));
+  background:
+    linear-gradient(145deg, var(--lg-top, rgba(255, 255, 255, 0.32)) 0%, var(--lg-mid, rgba(255, 255, 255, 0.14)) 52%, var(--lg-bottom, rgba(255, 255, 255, 0.08)) 100%),
+    linear-gradient(180deg, var(--lg-accent-top, rgba(137, 174, 189, 0.1)) 0%, var(--lg-accent-bottom, rgba(137, 174, 189, 0.03)) 100%);
+  box-shadow:
+    inset 0 1px 0 var(--lg-inner-hi, rgba(255, 255, 255, 0.55)),
+    inset 0 -1px 0 var(--lg-inner-lo, rgba(255, 255, 255, 0.2)),
+    0 10px 26px var(--lg-shadow-main, rgba(45, 74, 84, 0.14)),
+    0 2px 8px var(--lg-shadow-sub, rgba(35, 54, 61, 0.1));
+}
+
+.liquid-glass-panel::before,
+.liquid-glass-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background: radial-gradient(120% 80% at 10% -10%, rgba(255, 255, 255, 0.38) 0%, rgba(255, 255, 255, 0) 55%);
+}
+
+.liquid-glass-card {
+  transition: transform var(--transition), box-shadow var(--transition), border-color var(--transition);
+}
+
+.liquid-glass-card:hover {
+  border-color: var(--lg-hover-border, rgba(255, 255, 255, 0.58));
+  box-shadow:
+    inset 0 1px 0 var(--lg-hover-inner, rgba(255, 255, 255, 0.62)),
+    0 14px 30px var(--lg-hover-main, rgba(45, 74, 84, 0.18)),
+    0 3px 10px var(--lg-hover-sub, rgba(35, 54, 61, 0.12));
+}
+
+.liquid-glass-chip {
+  border: 1px solid var(--lg-chip-border, rgba(255, 255, 255, 0.46));
+  background: linear-gradient(180deg, var(--lg-chip-top, rgba(255, 255, 255, 0.46)), var(--lg-chip-bottom, rgba(255, 255, 255, 0.2)));
+  box-shadow:
+    inset 0 1px 0 var(--lg-chip-inner, rgba(255, 255, 255, 0.62)),
+    0 4px 12px var(--lg-chip-shadow, rgba(45, 74, 84, 0.11));
+}
+
+.liquid-glass-input {
+  border: 1px solid var(--lg-input-border, rgba(255, 255, 255, 0.5));
+  background: linear-gradient(180deg, var(--lg-input-top, rgba(255, 255, 255, 0.82)), var(--lg-input-bottom, rgba(255, 255, 255, 0.62)));
+  box-shadow:
+    inset 0 1px 0 var(--lg-input-inner, rgba(255, 255, 255, 0.7)),
+    0 5px 16px var(--lg-input-shadow, rgba(45, 74, 84, 0.08));
+}
+
+.liquid-glass-input:focus {
+  outline: none;
+  border-color: var(--lg-focus-border, rgba(137, 174, 189, 0.8));
+  box-shadow:
+    inset 0 1px 0 var(--lg-focus-inner, rgba(255, 255, 255, 0.76)),
+    0 0 0 3px var(--lg-focus-ring, rgba(137, 174, 189, 0.2)),
+    0 8px 20px var(--lg-focus-shadow, rgba(45, 74, 84, 0.12));
+}
+
+.dashboard-glass-root.glass-soft {
+  --lg-blur: 10px;
+  --lg-sat: 1.08;
+  --lg-border: rgba(255, 255, 255, 0.36);
+  --lg-top: rgba(255, 255, 255, 0.28);
+  --lg-mid: rgba(255, 255, 255, 0.12);
+  --lg-bottom: rgba(255, 255, 255, 0.07);
+  --lg-accent-top: rgba(137, 174, 189, 0.08);
+  --lg-accent-bottom: rgba(137, 174, 189, 0.03);
+}
+
+.dashboard-glass-root.glass-intense {
+  --lg-blur: 16px;
+  --lg-sat: 1.24;
+  --lg-border: rgba(255, 255, 255, 0.5);
+  --lg-top: rgba(255, 255, 255, 0.42);
+  --lg-mid: rgba(255, 255, 255, 0.2);
+  --lg-bottom: rgba(255, 255, 255, 0.12);
+  --lg-accent-top: rgba(137, 174, 189, 0.14);
+  --lg-accent-bottom: rgba(137, 174, 189, 0.05);
+  --lg-shadow-main: rgba(45, 74, 84, 0.2);
+  --lg-shadow-sub: rgba(35, 54, 61, 0.14);
+  --lg-hover-border: rgba(255, 255, 255, 0.66);
+  --lg-hover-main: rgba(45, 74, 84, 0.25);
+}
+
+@media (max-width: 767px) {
+  .liquid-glass-panel,
+  .liquid-glass-card,
+  .liquid-glass-chip,
+  .liquid-glass-input {
+    backdrop-filter: blur(9px) saturate(1.08);
+    -webkit-backdrop-filter: blur(9px) saturate(1.08);
+  }
+}
+
+@media (max-width: 1023px) {
+  .dashboard-glass-root.glass-intense {
+    --lg-blur: 10px;
+    --lg-sat: 1.08;
+    --lg-border: rgba(255, 255, 255, 0.36);
+    --lg-top: rgba(255, 255, 255, 0.28);
+    --lg-mid: rgba(255, 255, 255, 0.12);
+    --lg-bottom: rgba(255, 255, 255, 0.07);
+    --lg-accent-top: rgba(137, 174, 189, 0.08);
+    --lg-accent-bottom: rgba(137, 174, 189, 0.03);
+    --lg-shadow-main: rgba(45, 74, 84, 0.14);
+    --lg-shadow-sub: rgba(35, 54, 61, 0.1);
+    --lg-hover-border: rgba(255, 255, 255, 0.58);
+    --lg-hover-main: rgba(45, 74, 84, 0.18);
+  }
 }
 
 /* ── Metrics ───────────────────────────────────────────────────────── */
@@ -532,6 +684,12 @@ textarea:focus {
     overflow: hidden;
   }
 
+  .app-shell.is-dashboard {
+    display: block;
+    height: auto;
+    overflow: visible;
+  }
+
   .app-sidebar {
     position: sticky;
     top: 0;
@@ -596,6 +754,17 @@ textarea:focus {
     overflow-y: auto;
     overflow-x: hidden;
     overscroll-behavior: contain;
+  }
+
+  .app-shell.is-dashboard .app-main {
+    height: auto;
+    min-height: 100vh;
+    overflow: visible;
+  }
+
+  .app-shell.is-dashboard .dashboard-mode .app-main-frame {
+    padding-top: 2.25rem;
+    padding-bottom: 3.25rem;
   }
 
   .app-main-header-inner {

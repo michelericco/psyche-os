@@ -11,7 +11,6 @@ import {
   loadTimeline,
   saveSnapshot,
   deleteSnapshot,
-  getLastRunSummary,
 } from '../data/timelineStore'
 import {
   crossValidatedPatterns,
@@ -24,6 +23,7 @@ import {
   simulacrumIndex,
 } from '../data/loader'
 import type { SynthesisSnapshot, SynthesisDelta } from '../data/types'
+import { useI18n, type LanguageCode } from '../i18n'
 
 // Build the current synthesis object from loader exports
 const CURRENT_SYNTHESIS = {
@@ -50,6 +50,7 @@ const LAYER_COLOR: Record<string, string> = {
 // ── Main component ─────────────────────────────────────────────────
 
 export default function TimelineView() {
+  const { t, language } = useI18n()
   const [snapshots, setSnapshots] = useState<SynthesisSnapshot[]>([])
   const [label, setLabel]         = useState('')
   const [expanded, setExpanded]   = useState<string | null>(null)
@@ -78,19 +79,19 @@ export default function TimelineView() {
     refresh()
   }
 
-  const summary = getLastRunSummary()
+  const summary = snapshots.length > 0 ? summarizeSnapshot(snapshots[0], t) : null
 
   return (
     <div className="mx-auto max-w-3xl space-y-12 py-8">
       <SectionHead
-        title="Stratification timeline"
-        subtitle="Each snapshot is a full pipeline run. Drift between layers reveals how the psyche evolves."
+        title={t('timeline.title')}
+        subtitle={t('timeline.subtitle')}
       />
 
       {/* Last run summary */}
       {summary && (
         <p style={{ fontSize: '0.82rem', color: 'var(--ink-faint)', fontStyle: 'italic' }}>
-          Last run: {summary}
+          {t('timeline.lastRun')}: {summary}
         </p>
       )}
 
@@ -111,7 +112,7 @@ export default function TimelineView() {
           type="text"
           value={label}
           onChange={e => setLabel(e.target.value)}
-          placeholder="Label this snapshot (optional)"
+          placeholder={t('timeline.labelPlaceholder')}
           style={{ flex: '1 1 14rem', minWidth: 0 }}
           onKeyDown={e => e.key === 'Enter' && handleSave()}
         />
@@ -130,7 +131,7 @@ export default function TimelineView() {
             opacity:      saved ? 0.6 : 1,
           }}
         >
-          {saved ? 'Saved ✓' : 'Save snapshot'}
+          {saved ? `${t('timeline.saved')} ✓` : t('timeline.saveSnapshot')}
         </button>
       </div>
 
@@ -159,7 +160,7 @@ export default function TimelineView() {
       {/* Empty state */}
       {snapshots.length === 0 && (
         <div style={{ textAlign: 'center', color: 'var(--ink-faint)', padding: '3rem 0', fontSize: '0.9rem' }}>
-          No snapshots yet. Save your first one above to begin tracking.
+          {t('timeline.noSnapshots')}
         </div>
       )}
 
@@ -176,6 +177,8 @@ export default function TimelineView() {
             onToggle={() => setExpanded(expanded === snap.id ? null : snap.id)}
             onDelete={() => handleDelete(snap.id)}
             canDelete={snapshots.length > 1}
+            language={language}
+            t={t}
           />
         ))}
       </div>
@@ -194,6 +197,8 @@ function SnapshotRow({
   onToggle,
   onDelete,
   canDelete,
+  language,
+  t,
 }: {
   snap:       SynthesisSnapshot
   index:      number
@@ -203,12 +208,23 @@ function SnapshotRow({
   onToggle:   () => void
   onDelete:   () => void
   canDelete:  boolean
+  language:   LanguageCode
+  t:          (key: string) => string
 }) {
+  const localeByLang: Record<LanguageCode, string> = {
+    en: 'en-GB',
+    it: 'it-IT',
+    fr: 'fr-FR',
+    zh: 'zh-CN',
+    ru: 'ru-RU',
+    ar: 'ar-SA',
+  }
+  const locale = localeByLang[language]
   const date = new Date(snap.createdAt)
-  const dateStr = date.toLocaleDateString('en-GB', {
+  const dateStr = date.toLocaleDateString(locale, {
     day: 'numeric', month: 'short', year: 'numeric',
   })
-  const timeStr = date.toLocaleTimeString('en-GB', {
+  const timeStr = date.toLocaleTimeString(locale, {
     hour: '2-digit', minute: '2-digit',
   })
 
@@ -282,7 +298,7 @@ function SnapshotRow({
             )}
             {!snap.delta && (
               <span style={{ fontSize: '0.7rem', color: 'var(--ink-faint)', fontStyle: 'italic' }}>
-                baseline
+                {t('timeline.firstSnapshot')}
               </span>
             )}
             <span style={{ fontSize: '0.75rem', color: 'var(--ink-faint)' }}>
@@ -297,7 +313,7 @@ function SnapshotRow({
         )}
         {isExpanded && !snap.delta && (
           <div style={{ padding: '0 1.1rem 1rem', fontSize: '0.82rem', color: 'var(--ink-faint)', fontStyle: 'italic' }}>
-            This is the baseline snapshot — no delta to show.
+            {t('timeline.baselineNoDelta')}
           </div>
         )}
 
@@ -313,7 +329,7 @@ function SnapshotRow({
                 borderRadius: '4px',
               }}
             >
-              Delete snapshot
+              {t('timeline.deleteSnapshot')}
             </button>
           </div>
         )}
@@ -325,19 +341,20 @@ function SnapshotRow({
 // ── Pill summary of a delta ────────────────────────────────────────
 
 function DeltaSummaryPills({ delta }: { delta: SynthesisDelta }) {
+  const { t } = useI18n()
   const pills: { label: string; color: string }[] = []
 
   const totalPatternChanges = delta.patterns.shifted.length + delta.patterns.added.length + delta.patterns.removed.length
-  if (totalPatternChanges) pills.push({ label: `${totalPatternChanges} pattern${totalPatternChanges > 1 ? 's' : ''}`, color: LAYER_COLOR.Patterns })
+  if (totalPatternChanges) pills.push({ label: `${totalPatternChanges} ${totalPatternChanges > 1 ? t('timeline.patternShiftedPlural') : t('timeline.patternShifted')}`, color: LAYER_COLOR.Patterns })
 
   const dimCount = Object.keys(delta.dimensions).length
-  if (dimCount) pills.push({ label: `${dimCount} dim`, color: LAYER_COLOR.Dimensions })
+  if (dimCount) pills.push({ label: `${dimCount} ${t('timeline.dimShort')}`, color: LAYER_COLOR.Dimensions })
 
-  if (delta.potentials.length) pills.push({ label: `${delta.potentials.length} potential`, color: LAYER_COLOR.Potentials })
-  if (delta.narrative.chapterChanged) pills.push({ label: 'narrative ↻', color: LAYER_COLOR.Narrative })
-  if (delta.archetypes.dominant) pills.push({ label: 'archetype shift', color: LAYER_COLOR.Archetypes })
+  if (delta.potentials.length) pills.push({ label: `${delta.potentials.length} ${t('timeline.potentialShort')}`, color: LAYER_COLOR.Potentials })
+  if (delta.narrative.chapterChanged) pills.push({ label: `${t('timeline.narrativeShort')} ↻`, color: LAYER_COLOR.Narrative })
+  if (delta.archetypes.dominant) pills.push({ label: t('timeline.archetypeShift'), color: LAYER_COLOR.Archetypes })
 
-  if (!pills.length) return <span style={{ fontSize: '0.7rem', color: 'var(--ink-faint)', fontStyle: 'italic' }}>no significant change</span>
+  if (!pills.length) return <span style={{ fontSize: '0.7rem', color: 'var(--ink-faint)', fontStyle: 'italic' }}>{t('timeline.noSignificantChanges')}</span>
 
   return (
     <div style={{ display: 'flex', gap: '0.35rem', flexWrap: 'wrap', justifyContent: 'flex-end' }}>
@@ -355,20 +372,36 @@ function DeltaSummaryPills({ delta }: { delta: SynthesisDelta }) {
   )
 }
 
+function summarizeSnapshot(snap: SynthesisSnapshot, t: (key: string) => string): string {
+  const d = snap.delta
+  if (!d) return t('timeline.firstSnapshot')
+
+  const parts: string[] = []
+  if (d.patterns.shifted.length) parts.push(`${d.patterns.shifted.length} ${d.patterns.shifted.length > 1 ? t('timeline.patternShiftedPlural') : t('timeline.patternShifted')}`)
+  if (d.patterns.added.length) parts.push(`${d.patterns.added.length} ${t('timeline.new')}`)
+  if (d.patterns.removed.length) parts.push(`${d.patterns.removed.length} ${t('timeline.removed')}`)
+  if (d.potentials.length) parts.push(`${d.potentials.length} ${d.potentials.length > 1 ? t('timeline.potentialTransitionPlural') : t('timeline.potentialTransition')}`)
+  if (d.narrative.chapterChanged) parts.push(t('timeline.narrativeChanged'))
+  const summary = parts.length ? parts.join(' · ') : t('timeline.noSignificantChanges')
+
+  return `${d.interval}${t('timeline.gapDays')} · ${summary}`
+}
+
 // ── Expanded delta detail ──────────────────────────────────────────
 
 function DeltaDetail({ delta }: { delta: SynthesisDelta }) {
+  const { t } = useI18n()
   const sections: React.ReactElement[] = []
 
   // Patterns
   if (delta.patterns.shifted.length || delta.patterns.added.length || delta.patterns.removed.length) {
     sections.push(
-      <DeltaSection key="pat" title="Patterns" color={LAYER_COLOR.Patterns}>
+      <DeltaSection key="pat" title={t('timeline.patterns')} color={LAYER_COLOR.Patterns}>
         {delta.patterns.added.map(l => (
-          <DeltaRow key={l} label={l} tag="new" tagColor="#4a8c3c" />
+          <DeltaRow key={l} label={l} tag={t('timeline.new')} tagColor="#4a8c3c" />
         ))}
         {delta.patterns.removed.map(l => (
-          <DeltaRow key={l} label={l} tag="removed" tagColor="#b03820" />
+          <DeltaRow key={l} label={l} tag={t('timeline.removed')} tagColor="#b03820" />
         ))}
         {delta.patterns.shifted.map(p => (
           <DeltaRow key={p.id} label={p.label} delta={p.delta} />
@@ -380,7 +413,7 @@ function DeltaDetail({ delta }: { delta: SynthesisDelta }) {
   // Dimensions
   if (Object.keys(delta.dimensions).length) {
     sections.push(
-      <DeltaSection key="dim" title="Dimensions" color={LAYER_COLOR.Dimensions}>
+      <DeltaSection key="dim" title={t('timeline.dimensions')} color={LAYER_COLOR.Dimensions}>
         {Object.entries(delta.dimensions).map(([dim, d]) => (
           <DeltaRow
             key={dim}
@@ -396,7 +429,7 @@ function DeltaDetail({ delta }: { delta: SynthesisDelta }) {
   // Potentials
   if (delta.potentials.length) {
     sections.push(
-      <DeltaSection key="pot" title="Potentials" color={LAYER_COLOR.Potentials}>
+      <DeltaSection key="pot" title={t('timeline.potentials')} color={LAYER_COLOR.Potentials}>
         {delta.potentials.map(p => (
           <DeltaRow
             key={p.label}
@@ -411,12 +444,12 @@ function DeltaDetail({ delta }: { delta: SynthesisDelta }) {
   // Archetypes
   if (delta.archetypes.dominant || delta.archetypes.emergent) {
     sections.push(
-      <DeltaSection key="arc" title="Archetypes" color={LAYER_COLOR.Archetypes}>
+      <DeltaSection key="arc" title={t('timeline.archetypes')} color={LAYER_COLOR.Archetypes}>
         {delta.archetypes.dominant && (
-          <DeltaRow label="Dominant" sub={`${delta.archetypes.dominant.from} → ${delta.archetypes.dominant.to}`} />
+          <DeltaRow label={t('timeline.dominant')} sub={`${delta.archetypes.dominant.from} → ${delta.archetypes.dominant.to}`} />
         )}
         {delta.archetypes.emergent && (
-          <DeltaRow label="Emergent" sub={`${delta.archetypes.emergent.from} → ${delta.archetypes.emergent.to}`} />
+          <DeltaRow label={t('timeline.emergent')} sub={`${delta.archetypes.emergent.from} → ${delta.archetypes.emergent.to}`} />
         )}
       </DeltaSection>
     )
@@ -425,9 +458,9 @@ function DeltaDetail({ delta }: { delta: SynthesisDelta }) {
   // Narrative
   if (delta.narrative.chapterChanged) {
     sections.push(
-      <DeltaSection key="nar" title="Narrative" color={LAYER_COLOR.Narrative}>
+      <DeltaSection key="nar" title={t('timeline.narrative')} color={LAYER_COLOR.Narrative}>
         <DeltaRow
-          label="Chapter"
+          label={t('timeline.chapter')}
           sub={`${delta.narrative.from ?? '—'} → ${delta.narrative.to ?? '—'}`}
         />
       </DeltaSection>
@@ -437,7 +470,7 @@ function DeltaDetail({ delta }: { delta: SynthesisDelta }) {
   if (!sections.length) {
     return (
       <p style={{ padding: '0 1.1rem 1rem', fontSize: '0.82rem', color: 'var(--ink-faint)', fontStyle: 'italic' }}>
-        No changes above the significance threshold ({delta.interval} days elapsed).
+        {t('timeline.noChangesAbove')} ({delta.interval} {delta.interval !== 1 ? t('timeline.dayPlural') : t('timeline.day')}).
       </p>
     )
   }
@@ -450,7 +483,7 @@ function DeltaDetail({ delta }: { delta: SynthesisDelta }) {
       paddingTop: '0.9rem',
     }}>
       <p style={{ margin: 0, fontSize: '0.72rem', color: 'var(--ink-faint)', letterSpacing: '0.08em' }}>
-        Interval: {delta.interval} day{delta.interval !== 1 ? 's' : ''}
+        {t('timeline.interval')}: {delta.interval} {delta.interval !== 1 ? t('timeline.dayPlural') : t('timeline.day')}
       </p>
       {sections}
     </div>

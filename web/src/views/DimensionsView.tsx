@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { dimensionalScores, DIMENSION_COLORS } from '../data/loader'
 import { getDimensionDelta } from '../data/timelineStore'
+import { useI18n } from '../i18n'
 import {
   SectionHead,
   Expandable,
@@ -26,6 +27,7 @@ const dimensions = Object.entries(dimensionalScores).map(([name, dim]) => {
 // ── Component ────────────────────────────────────────────────────────
 
 export default function DimensionsView() {
+  const { t } = useI18n()
   const [selected, setSelected] = useState<string | null>(null)
   const [rotation, setRotation] = useState(0)
   // Animazione orbitale
@@ -51,8 +53,8 @@ export default function DimensionsView() {
   if (!dimensions || dimensions.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[40vh]">
-        <SectionHead title="Dimensional Map" explanation="Mappa orbitale interattiva" />
-        <div className="text-lg text-[color:var(--ink-faint)] mt-10">Nessuna dimensione disponibile. Controlla i dati o la pipeline.</div>
+        <SectionHead title={t('dimensions.title')} explanation={t('dimensions.explanation')} />
+        <div className="text-lg text-[color:var(--ink-faint)] mt-10">{t('dimensions.none')}</div>
       </div>
     )
   }
@@ -60,8 +62,8 @@ export default function DimensionsView() {
   return (
     <div className="space-y-10">
       <SectionHead
-        title="Dimensional Map"
-        explanation="Mappa orbitale interattiva: clicca su una dimensione per dettagli."
+        title={t('dimensions.title')}
+        explanation={t('dimensions.explanation')}
       />
       <div className="flex flex-col items-center">
         <svg width={440} height={440} style={{ margin: '0 auto', display: 'block' }}>
@@ -124,7 +126,7 @@ export default function DimensionsView() {
             )}
             {sel.blindSpot && (
               <div className="border-l-2 border-amber-500/40 pl-3">
-                <span className="text-xs font-medium uppercase tracking-wider text-amber-500/70">Blind Spot</span>
+                <span className="text-xs font-medium uppercase tracking-wider text-amber-500/70">{t('dimensions.blindSpot')}</span>
                 <span className="block text-xs text-[color:var(--ink-soft)]">{sel.blindSpot}</span>
               </div>
             )}
@@ -152,7 +154,7 @@ export default function DimensionsView() {
                 <DriftBadge delta={getDimensionDelta(dim.name)?.scoreDelta} />
               </div>
             }
-            summary={`Score: ${Math.round(dim.score * 100)}%`}
+            summary={`${t('dimensions.score')}: ${Math.round(dim.score * 100)}%`}
           >
             <div className="space-y-4">
               <div className="flex items-center gap-3">
@@ -173,7 +175,7 @@ export default function DimensionsView() {
               {dim.blindSpot && (
                 <div className="border-l-2 border-amber-500/40 pl-4">
                   <span className="text-xs font-medium uppercase tracking-wider text-amber-500/70">
-                    Blind Spot
+                    {t('dimensions.blindSpot')}
                   </span>
                   <p className="mt-1 text-sm leading-relaxed text-[color:var(--ink-soft)]">{dim.blindSpot}</p>
                 </div>

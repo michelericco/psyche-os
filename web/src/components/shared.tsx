@@ -1,4 +1,5 @@
 import { useCallback, useId, useState, type ReactNode } from 'react'
+import { useI18n } from '../i18n'
 
 /** Two-column layout: visual content left, text/analysis right on desktop */
 export function TwoCol({ left, right }: { left: ReactNode; right: ReactNode }) {
@@ -82,6 +83,7 @@ export function Expandable({
 
 /** Copyable code block */
 export function CopyBlock({ code, label }: { code: string; label?: string }) {
+  const { t } = useI18n()
   const [copied, setCopied] = useState(false)
 
   const handleCopy = useCallback(() => {
@@ -104,7 +106,7 @@ export function CopyBlock({ code, label }: { code: string; label?: string }) {
           onClick={handleCopy}
           className="shrink-0 text-[0.62rem] uppercase tracking-[0.28em] text-[color:var(--ink-faint)] transition-colors hover:text-[color:var(--accent)] cursor-pointer"
         >
-          {copied ? 'Copied' : 'Copy'}
+          {copied ? t('shared.copied') : t('shared.copy')}
         </button>
       </div>
       <pre className="overflow-x-auto border border-[color:var(--line)] bg-[color:var(--panel)] p-4 text-[0.76rem] leading-7 text-[color:var(--ink-soft)]">
@@ -126,10 +128,11 @@ export function Cite({
   year?: string
   detail?: string
 }) {
+  const { t } = useI18n()
   return (
     <div className="flex gap-2 py-1">
       <span className="mt-0.5 shrink-0 text-[0.65rem] uppercase tracking-[0.24em] text-[color:var(--accent)]">
-        Ref
+        {t('shared.ref')}
       </span>
       <div>
         <span className="text-[0.78rem] text-[color:var(--ink-soft)]">
@@ -144,10 +147,11 @@ export function Cite({
 
 /** Citation block for grouping references */
 export function References({ children }: { children: ReactNode }) {
+  const { t } = useI18n()
   return (
     <div className="mt-6 space-y-1 border-t border-[color:var(--line)] pt-4">
       <div className="mb-2 text-[0.62rem] uppercase tracking-[0.3em] text-[color:var(--ink-faint)]">
-        References
+        {t('shared.references')}
       </div>
       {children}
     </div>
@@ -213,6 +217,7 @@ export function ExploreButton({
   context?: string
   sources?: string
 }) {
+  const { t } = useI18n()
   const [copied, setCopied] = useState(false)
 
   const prompt = [
@@ -240,13 +245,13 @@ export function ExploreButton({
   return (
     <button
       onClick={(e) => { e.stopPropagation(); handleCopy() }}
-      title="Copy exploration prompt for AI chat"
+      title={t('shared.explorePromptTitle')}
       className="inline-flex items-center gap-1 text-[0.52rem] uppercase tracking-[0.18em] text-[color:var(--ink-faint)] transition-colors hover:text-[color:var(--accent)] cursor-pointer"
     >
       <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
         <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
       </svg>
-      {copied ? 'Prompt copied' : 'Explore'}
+      {copied ? t('shared.promptCopied') : t('shared.explore')}
     </button>
   )
 }

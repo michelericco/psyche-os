@@ -30,6 +30,7 @@ const synthesis = synthesisRaw as {
   directionalVector?: DirectionalVector
   modelLimitations?: string[]
   simulacrumIndex?: number
+  sensorData?: unknown[]
 }
 
 // Cross-validated patterns from synthesis
@@ -51,6 +52,9 @@ export const narrativeArc: NarrativeArc = synthesis.narrativeArc
 export const directionalVector: DirectionalVector | undefined = synthesis.directionalVector
 export const modelLimitations: string[] = synthesis.modelLimitations ?? []
 export const simulacrumIndex: number = synthesis.simulacrumIndex ?? 0
+
+// Sensorial data export
+export const sensorData = (synthesis as any).sensorData ?? [];
 
 // ---------------------------------------------------------------------------
 // Hardcoded data (not in synthesis JSON — entities, themes, genome, etc.)
@@ -387,9 +391,9 @@ export const neurodivergenceIndicators: import('./types').NeurodivergenceIndicat
   },
 ]
 
-export const neurodivergenceOverlapAnalysis = 'The four dimensions analyzed here overlap substantially. ADHD and giftedness share novelty-seeking, rapid ideation, and intensity. ASD and giftedness share systematizing, deep interests, and social selectivity. HSP overlaps with all three through deep processing and sensitivity. This is why differential diagnosis requires professional assessment: the same behavioral pattern (e.g., project restarts) can have entirely different underlying mechanisms (impulsivity vs. perfectionism vs. boredom from mastery). In this profile, the strongest convergent signal is across the giftedness and ADHD-adjacent dimensions, which is consistent with the "twice-exceptional" (2e) literature where high cognitive ability coexists with executive function variability.'
+export const neurodivergenceOverlapAnalysis = 'The four dimensions analyzed here overlap substantially. ADHD and giftedness share novelty-seeking, rapid ideation, and intensity. ASD and giftedness share systematizing, deep interests, and social selectivity. HSP overlaps with all three through deep processing and sensitivity. This is why differential diagnosis requires professional assessment: the same behavioral pattern (e.g., project restarts) can have entirely different underlying mechanisms (impulsivity vs. perfectionism vs. boredom from mastery). In this profile, the strongest convergent signal is across the giftedness and ADHD-adjacent dimensions, which is consistent with the "twice-exceptional" (2e) literature where high cognitive ability coexists with executive function variability'
 
-export const neurodivergenceSummary = 'The behavioral profile shows moderate-to-strong indicators of intellectual giftedness (overexcitabilities, cross-domain transfer, existential depth) and moderate ADHD-adjacent patterns (burst rhythms, novelty-seeking, completion difficulty). Autism spectrum and HSP indicators are present but weaker and largely explainable by introversion, engineering training, and high Openness. The overall picture is more consistent with a gifted/2e profile than with any single clinical neurodivergent condition, but formal assessment would be needed to confirm or refute this.'
+export const neurodivergenceSummary = 'The behavioral profile shows moderate-to-strong indicators of intellectual giftedness (overexcitabilities, cross-domain transfer, existential depth) and moderate ADHD-adjacent patterns (burst rhythms, novelty-seeking, completion difficulty). Autism spectrum and HSP indicators are present but weaker and largely explainable by introversion, engineering training, and high Openness. The overall picture is more consistent with a gifted/2e profile than with any single clinical neurodivergent condition, but formal assessment would be needed to confirm or refute this'
 
 // ---------------------------------------------------------------------------
 // Extraction-level data (hardcoded — per-source detail not in synthesis)
