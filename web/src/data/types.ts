@@ -91,6 +91,7 @@ export interface DimensionalScore {
   blindSpot?: string
   evidence?: string
   sourceMemories?: string[]
+  status?: 'Emergente' | 'Stabile' | 'In tensione'
 }
 
 export interface EmotionalTone {
@@ -213,4 +214,64 @@ export interface NeurodivergenceIndicator {
   references: { author: string; work: string; year: string; detail: string }[]
 }
 
-export type ViewId = 'sources' | 'overview' | 'genome' | 'patterns' | 'archetypes' | 'dimensions' | 'potentials' | 'narrative' | 'insights' | 'iq' | 'neurodivergence' | 'map' | 'integration'
+export type ViewId = 'dashboard' | 'sources' | 'overview' | 'genome' | 'patterns' | 'archetypes' | 'dimensions' | 'potentials' | 'narrative' | 'insights' | 'iq' | 'neurodivergence' | 'map' | 'integration' | 'diary' | 'timeline'
+
+// ── Temporal stratification ────────────────────────────────────────
+
+/** How much a metric changed between two snapshots (positive = grown) */
+export interface StratumDelta {
+  scoreDelta: number        // absolute difference, e.g. +0.12
+  statusChange?: {
+    from: string
+    to: string
+  }
+}
+
+/** Changes across every layer between two pipeline runs */
+export interface SynthesisDelta {
+  /** Days elapsed between the two snapshots */
+  interval: number
+
+  patterns: {
+    added:   string[]
+    removed: string[]
+    shifted: { id: string; label: string; delta: number }[]
+  }
+
+  dimensions: Record<string, StratumDelta>
+
+  archetypes: {
+    dominant?:  { from: string; to: string }
+    emergent?:  { from: string; to: string }
+  }
+
+  potentials: {
+    label: string
+    from:  Potential['state']
+    to:    Potential['state']
+  }[]
+
+  narrative: {
+    chapterChanged: boolean
+    from?: string
+    to?:   string
+  }
+
+  genome: Record<string, { scoreDelta: number }>
+}
+
+/** One full pipeline run, timestamped and linked to the previous */
+export interface SynthesisSnapshot {
+  id:           string     // crypto.randomUUID()
+  createdAt:    string     // ISO-8601
+  label?:       string     // user-provided name, e.g. "After 3 months"
+  previousId?:  string
+  data:         Synthesis
+  delta?:       SynthesisDelta
+}
+
+/** Persisted in localStorage — the full history */
+export interface SynthesisTimeline {
+  snapshots: SynthesisSnapshot[]
+  activeId:  string
+}

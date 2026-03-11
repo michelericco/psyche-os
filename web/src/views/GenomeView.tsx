@@ -215,10 +215,10 @@ function PrimitiveDetailPanel({
       {/* Evidence */}
       <Expandable title="Evidence" defaultOpen>
         <ul className="space-y-2">
-          {detail.evidence.map((ev) => (
+          {detail.evidence.map((ev, i) => (
             <li key={ev} className="flex items-start gap-2">
               <span className="text-[color:var(--accent)]/60 text-xs mt-0.5 shrink-0">
-                [ev]
+                [{i + 1}]
               </span>
               <span className="text-xs text-[color:var(--ink-soft)] leading-relaxed">
                 {ev}

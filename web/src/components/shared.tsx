@@ -251,6 +251,49 @@ export function ExploreButton({
   )
 }
 
+/**
+ * DriftBadge — shows ↑/↓ change between two pipeline snapshots.
+ * delta: absolute difference (e.g. +0.12 = +12 confidence points)
+ */
+export function DriftBadge({
+  delta,
+  threshold = 0.02,
+  format = 'percent',
+}: {
+  delta: number | null | undefined
+  threshold?: number
+  format?: 'percent' | 'raw'
+}) {
+  if (delta == null || Math.abs(delta) < threshold) return null
+  const up  = delta > 0
+  const val = format === 'percent'
+    ? `${Math.abs(delta * 100).toFixed(0)}%`
+    : `${Math.abs(delta).toFixed(2)}`
+  return (
+    <span
+      title={`${up ? '+' : ''}${(delta * 100).toFixed(1)}% since last snapshot`}
+      style={{
+        display:       'inline-flex',
+        alignItems:    'center',
+        gap:           '0.15em',
+        fontSize:      '0.65rem',
+        fontWeight:    700,
+        letterSpacing: '0.04em',
+        color:         up ? '#4a8c3c' : '#b03820',
+        background:    up ? 'rgba(74,140,60,0.10)' : 'rgba(176,56,32,0.10)',
+        borderRadius:  '4px',
+        padding:       '0.1em 0.4em',
+        marginLeft:    '0.45em',
+        verticalAlign: 'middle',
+        cursor:        'default',
+        userSelect:    'none',
+      }}
+    >
+      {up ? '↑' : '↓'} {val}
+    </span>
+  )
+}
+
 /** State badge */
 export function StateBadge({ state }: { state: string }) {
   const styles: Record<string, string> = {

@@ -595,8 +595,8 @@ def main():
     try:
         client.delete_collection(COLLECTION_NAME)
         print(f"  Deleted existing collection '{COLLECTION_NAME}'")
-    except Exception:
-        pass
+    except ValueError:
+        pass  # Collection does not exist yet — expected on first run
 
     collection = client.create_collection(
         name=COLLECTION_NAME,

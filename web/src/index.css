@@ -1,17 +1,24 @@
 @import "tailwindcss";
 
 :root {
-  --paper: #f4ede2;
-  --paper-strong: #fbf7f1;
-  --panel: rgba(252, 247, 239, 0.82);
-  --panel-soft: rgba(246, 237, 224, 0.74);
-  --line: rgba(63, 49, 34, 0.14);
-  --line-strong: rgba(63, 49, 34, 0.3);
-  --ink: #1f1913;
-  --ink-soft: #4f443a;
-  --ink-faint: #66594c;
-  --accent: #9f4a34;
-  --accent-strong: #7d3525;
+  --paper: #f5ede0;
+  --paper-strong: #fdf8f2;
+  --panel: rgba(253, 248, 242, 0.88);
+  --panel-soft: rgba(246, 237, 224, 0.76);
+  --line: rgba(60, 44, 28, 0.10);
+  --line-strong: rgba(60, 44, 28, 0.22);
+  --ink: #1a1410;
+  --ink-soft: #4a3f36;
+  --ink-faint: #7a6a5e;
+  --accent: #c0392b;
+  --accent-strong: #96281b;
+  --accent-tint: rgba(192, 57, 43, 0.10);
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --shadow-card: 0 1px 1px rgba(0,0,0,0.03), 0 3px 12px rgba(0,0,0,0.07), 0 1px 3px rgba(0,0,0,0.05);
+  --shadow-hover: 0 2px 2px rgba(0,0,0,0.04), 0 6px 20px rgba(0,0,0,0.10);
+  --transition: 200ms cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 html {
@@ -24,25 +31,13 @@ body {
   margin: 0;
   min-height: 100%;
   color: var(--ink);
-  font-family: 'Zen Kaku Gothic New', system-ui, sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", system-ui, sans-serif;
+  font-size: 1.125rem;
+  line-height: 1.6;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
   background: var(--paper);
   position: relative;
-}
-
-body::before {
-  content: '';
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  background-image:
-    radial-gradient(rgba(63, 49, 34, 0.03) 0.6px, transparent 0.8px),
-    radial-gradient(rgba(255, 255, 255, 0.22) 0.55px, transparent 0.8px);
-  background-size: 14px 14px, 19px 19px;
-  background-position: 0 0, 7px 9px;
-  opacity: 0.45;
-  z-index: -1;
 }
 
 * {
@@ -57,7 +52,7 @@ select {
 }
 
 ::selection {
-  background: rgba(159, 74, 52, 0.18);
+  background: rgba(192, 57, 43, 0.15);
   color: var(--ink);
 }
 
@@ -69,26 +64,31 @@ h1,
 h2,
 h3,
 .display-type {
-  font-family: 'Zen Old Mincho', serif;
-  font-weight: 500;
-  letter-spacing: -0.04em;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", system-ui, sans-serif;
+  font-weight: 700;
+  letter-spacing: -0.03em;
 }
 
 code,
 pre,
 .font-mono {
-  font-family: 'IBM Plex Mono', 'SFMono-Regular', ui-monospace, monospace;
+  font-family: 'SF Mono', 'IBM Plex Mono', ui-monospace, monospace;
 }
+
+/* ── Shell ─────────────────────────────────────────────────────────── */
 
 .app-shell {
   min-height: 100vh;
   min-width: 0;
 }
 
+/* ── Sidebar ───────────────────────────────────────────────────────── */
+
 .app-sidebar {
   border-bottom: 1px solid var(--line);
-  background: linear-gradient(180deg, rgba(251, 247, 241, 0.82), rgba(251, 247, 241, 0.58));
-  backdrop-filter: blur(14px);
+  background: rgba(248, 241, 232, 0.92);
+  backdrop-filter: blur(20px) saturate(1.6);
+  -webkit-backdrop-filter: blur(20px) saturate(1.6);
   min-width: 0;
   overflow-x: clip;
 }
@@ -96,29 +96,34 @@ pre,
 .app-sidebar-inner {
   display: flex;
   flex-direction: column;
-  gap: 2rem;
-  padding: 1.5rem;
+  gap: 1.5rem;
+  padding: 1.5rem 1rem;
   min-height: 0;
   min-width: 0;
   overflow-x: clip;
 }
 
+/* ── Kicker ────────────────────────────────────────────────────────── */
+
 .app-kicker {
-  font-size: 0.66rem;
-  letter-spacing: 0.3em;
+  font-size: 0.69rem;
+  letter-spacing: 0.18em;
   text-transform: uppercase;
+  font-weight: 600;
   color: var(--ink-faint);
 }
 
+/* ── Brand ─────────────────────────────────────────────────────────── */
+
 .app-brand {
-  margin: 0.75rem 0 0;
+  margin: 0.6rem 0 0;
   display: flex;
   align-items: baseline;
-  gap: 0.16rem;
+  gap: 0.12rem;
   max-width: 100%;
-  font-size: clamp(1.52rem, 3vw, 2.14rem);
-  line-height: 0.92;
-  letter-spacing: -0.055em;
+  font-size: clamp(1.52rem, 3vw, 2rem);
+  line-height: 0.94;
+  letter-spacing: -0.05em;
   white-space: nowrap;
 }
 
@@ -128,61 +133,74 @@ pre,
 
 .app-brand-divider {
   color: var(--ink-faint);
+  font-weight: 300;
 }
 
 .app-brand-note {
-  margin: 1rem 0 0;
-  max-width: 26rem;
+  margin: 0.85rem 0 0;
+  max-width: 24rem;
   color: var(--ink-soft);
-  font-size: 0.88rem;
-  line-height: 1.95;
+  font-size: 0.95rem;
+  line-height: 1.8;
+  font-style: italic;
 }
 
 .app-brand-attribution {
   display: block;
-  margin-top: 0.55rem;
-  font-size: 0.66rem;
-  letter-spacing: 0.22em;
+  margin-top: 0.4rem;
+  font-size: 0.68rem;
+  letter-spacing: 0.18em;
   text-transform: uppercase;
+  font-weight: 600;
+  font-style: normal;
   color: var(--ink-faint);
 }
 
+/* ── Nav ───────────────────────────────────────────────────────────── */
+
 .app-nav {
-  display: grid;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
 }
 
 .app-nav-button {
   display: grid;
-  grid-template-columns: 2.6rem minmax(0, 1fr);
-  gap: 1rem;
+  grid-template-columns: 2.2rem minmax(0, 1fr);
+  gap: 0.75rem;
   width: 100%;
-  padding: 0.95rem 0;
+  padding: 0.65rem 0.75rem;
   border: 0;
-  border-top: 1px solid transparent;
-  border-bottom: 1px solid var(--line);
+  border-radius: var(--radius-sm);
   background: transparent;
   text-align: left;
   color: var(--ink-soft);
   cursor: pointer;
-  transition: color 180ms ease, border-color 180ms ease, transform 180ms ease;
+  transition: background var(--transition), color var(--transition);
 }
 
 .app-nav-button:hover {
+  background: rgba(0, 0, 0, 0.05);
   color: var(--ink);
-  border-color: var(--line-strong);
 }
 
 .app-nav-button.is-active {
-  color: var(--ink);
-  border-color: var(--accent);
+  background: var(--accent-tint);
+  color: var(--accent-strong);
+}
+
+.app-nav-button.is-active .app-nav-index {
+  color: var(--accent);
 }
 
 .app-nav-index {
-  padding-top: 0.18rem;
-  font-size: 0.66rem;
-  letter-spacing: 0.32em;
+  padding-top: 0.12rem;
+  font-size: 0.7rem;
+  letter-spacing: 0.22em;
   text-transform: uppercase;
+  font-weight: 600;
   color: var(--ink-faint);
+  transition: color var(--transition);
 }
 
 .app-nav-copy {
@@ -192,38 +210,26 @@ pre,
 .app-nav-label {
   display: block;
   font-size: 1rem;
+  font-weight: 500;
 }
 
 .app-nav-note {
   display: block;
-  margin-top: 0.24rem;
+  margin-top: 0.1rem;
   color: var(--ink-faint);
-  font-size: 0.76rem;
-  line-height: 1.55;
+  font-size: 0.85rem;
+  line-height: 1.4;
 }
 
-.app-side-footer {
-  margin-top: auto;
-  padding-top: 1.25rem;
-  border-top: 1px solid var(--line);
-}
-
-.app-side-footer p {
-  margin: 0;
-  color: var(--ink-faint);
-  font-size: 0.78rem;
-  line-height: 1.8;
-}
-
-.app-side-footer p + p {
-  margin-top: 0.55rem;
-}
+/* ── Main ──────────────────────────────────────────────────────────── */
 
 .app-main {
   min-width: 0;
-  --frame-width: 72rem;
-  --frame-pad: 1.5rem;
+  --frame-width: 90rem; /* increased to allow wider layout */
+  --frame-pad: 2rem;
 }
+
+/* ── Main header ───────────────────────────────────────────────────── */
 
 .app-main-header {
   position: sticky;
@@ -238,14 +244,9 @@ pre,
   inset: 0;
   z-index: -1;
   pointer-events: none;
-  background: linear-gradient(
-    180deg,
-    rgba(244, 237, 226, 0.98) 0%,
-    rgba(244, 237, 226, 0.95) 74%,
-    rgba(244, 237, 226, 0.72) 88%,
-    rgba(244, 237, 226, 0) 100%
-  );
-  backdrop-filter: blur(12px);
+  background: rgba(245, 237, 224, 0.92);
+  backdrop-filter: blur(20px) saturate(1.6);
+  -webkit-backdrop-filter: blur(20px) saturate(1.6);
 }
 
 .app-main-header-inner,
@@ -258,37 +259,62 @@ pre,
 
 .app-main-header-inner {
   display: grid;
-  gap: 0.8rem;
-  padding-top: 1.35rem;
-  padding-bottom: 1.4rem;
+  gap: 0.5rem;
+  padding-top: 1.1rem;
+  padding-bottom: 1.15rem;
 }
 
 .app-main-frame {
-  padding-top: 2rem;
-  padding-bottom: 2.5rem;
+  padding-top: 2.25rem;
+  padding-bottom: 3rem;
 }
 
+/* ── View title ────────────────────────────────────────────────────── */
+
 .app-view-title {
-  margin: 0.28rem 0 0;
-  max-width: min(16ch, 100%);
-  font-size: clamp(2.1rem, 5.6vw, 4rem);
-  line-height: 0.96;
+  margin: 0.2rem 0 0;
+  max-width: min(18ch, 100%);
+  font-size: clamp(2.2rem, 5vw, 3.8rem);
+  line-height: 0.98;
+  letter-spacing: -0.04em;
   overflow-wrap: normal;
   word-break: normal;
-  text-wrap: balance;
 }
 
 .app-view-note {
   margin: 0;
-  max-width: 24rem;
+  max-width: 26rem;
   color: var(--ink-soft);
-  font-size: 0.85rem;
-  line-height: 1.8;
+  font-size: 0.95rem;
+  line-height: 1.7;
 }
 
+/* ── View shell ────────────────────────────────────────────────────── */
+
 .view-shell {
-  min-height: calc(100vh - 11rem);
+  min-height: calc(100vh - 10rem);
 }
+
+/* ── Dashboard mode (no sidebar, no header) ────────────────────────── */
+
+.dashboard-mode {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center; /* center content horizontally */
+  min-height: 100vh;
+}
+
+.dashboard-mode .app-main-frame {
+  padding-top: 0;
+  padding-bottom: 0;
+  width: 100%; /* allow frame to stretch across viewport */
+  max-width: none; /* remove cap so dashboard fills available space */
+  padding-left: 2rem;
+  padding-right: 2rem;
+}
+
+/* ── Loading ───────────────────────────────────────────────────────── */
 
 .app-loading {
   padding: 3rem 0;
@@ -298,6 +324,22 @@ pre,
   text-transform: uppercase;
 }
 
+/* ── Cards ─────────────────────────────────────────────────────────── */
+
+.card {
+  background: var(--paper-strong);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+  padding: 1.5rem;
+  transition: box-shadow var(--transition), transform var(--transition);
+}
+
+.card:hover {
+  box-shadow: var(--shadow-hover);
+}
+
+/* ── Metrics ───────────────────────────────────────────────────────── */
+
 .metric-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -306,33 +348,65 @@ pre,
 
 .metric-block {
   min-height: 4.75rem;
-  padding-top: 1rem;
-  border-top: 1px solid var(--line-strong);
+  padding: 1rem 1.2rem;
+  background: var(--paper-strong);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-card);
 }
 
 .metric-value {
-  font-family: 'Zen Old Mincho', serif;
-  font-size: clamp(2.1rem, 5vw, 3.1rem);
-  line-height: 0.9;
+  font-family: -apple-system, "SF Pro Display", system-ui, sans-serif;
+  font-size: clamp(2rem, 5vw, 3rem);
+  font-weight: 700;
+  line-height: 0.92;
+  letter-spacing: -0.04em;
   color: var(--accent);
 }
 
 .metric-label {
   margin-top: 0.35rem;
   color: var(--ink-faint);
-  font-size: 0.68rem;
-  letter-spacing: 0.28em;
+  font-size: 0.8rem;
+  letter-spacing: 0.18em;
   text-transform: uppercase;
+  font-weight: 600;
 }
+
+/* ── Body copy ─────────────────────────────────────────────────────── */
 
 .body-copy {
   color: var(--ink-soft);
-  font-size: 0.98rem;
-  line-height: 1.9;
+  font-size: 1.05rem;
+  line-height: 1.85;
 }
 
+/* ── Inputs (Apple-style) ──────────────────────────────────────────── */
+
+input[type="text"],
+input[type="search"],
+input[type="email"],
+textarea {
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--line-strong);
+  background: var(--paper-strong);
+  padding: 0.6rem 0.85rem;
+  color: var(--ink);
+  transition: border-color var(--transition), box-shadow var(--transition);
+  outline: none;
+}
+
+input[type="text"]:focus,
+input[type="search"]:focus,
+input[type="email"]:focus,
+textarea:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-tint);
+}
+
+/* ── Scrollbar ─────────────────────────────────────────────────────── */
+
 ::-webkit-scrollbar {
-  width: 7px;
+  width: 5px;
 }
 
 ::-webkit-scrollbar-track {
@@ -340,22 +414,74 @@ pre,
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(91, 80, 69, 0.35);
+  background: rgba(91, 70, 55, 0.28);
   border-radius: 999px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(91, 80, 69, 0.5);
+  background: rgba(91, 70, 55, 0.45);
 }
+
+/* ═══ Miyazaki animations ═══════════════════════════════════════════ */
+
+@keyframes miya-leaf-fall {
+  0% {
+    transform: translate(0, -30px) rotate(0deg);
+    opacity: 0;
+  }
+  6%  { opacity: 0.72; }
+  92% { opacity: 0.42; }
+  100% {
+    transform: translate(var(--leaf-drift, -60px), 105vh) rotate(var(--leaf-spin, 360deg));
+    opacity: 0;
+  }
+}
+
+@keyframes miya-kodama-bob {
+  0%, 100% { transform: translateY(0)    rotate(-3deg) scale(1);    }
+  50%       { transform: translateY(-9px) rotate( 3deg) scale(1.04); }
+}
+
+@keyframes miya-firefly {
+  0%, 100% { opacity: 0;   transform: scale(0.35) translate(  0px,   0px); }
+  25%       { opacity: 0.9; transform: scale(1)    translate(  4px,  -7px); }
+  60%       { opacity: 0.7; transform: scale(0.8)  translate( -3px, -13px); }
+  85%       { opacity: 0.2; transform: scale(0.5)  translate(  5px, -18px); }
+}
+
+.miya-leaf-fall {
+  animation: miya-leaf-fall linear infinite;
+  will-change: transform, opacity;
+}
+
+.miya-kodama-bob {
+  animation: miya-kodama-bob ease-in-out infinite;
+  display: inline-block;
+  will-change: transform;
+}
+
+.miya-firefly {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: #f0d060;
+  box-shadow: 0 0 6px 3px rgba(240,208,70,0.65), 0 0 14px 6px rgba(240,208,70,0.28);
+  animation: miya-firefly ease-in-out infinite;
+  will-change: transform, opacity;
+}
+
+/* ── Recharts ──────────────────────────────────────────────────────── */
 
 .recharts-text {
   fill: var(--ink-soft) !important;
-  font-size: 11px;
+  font-size: 0.72rem;
 }
 
 .recharts-cartesian-grid line {
-  stroke: rgba(63, 49, 34, 0.14) !important;
+  stroke: var(--line) !important;
 }
+
+/* ── Responsive: tablet ────────────────────────────────────────────── */
 
 @media (min-width: 768px) {
   .app-main-header-inner {
@@ -367,11 +493,6 @@ pre,
     --frame-pad: 2.5rem;
   }
 
-  .app-main-header-inner {
-    padding-top: 1.6rem;
-    padding-bottom: 1.55rem;
-  }
-
   .app-main-frame {
     padding-top: 2.25rem;
     padding-bottom: 3rem;
@@ -381,6 +502,8 @@ pre,
     text-align: right;
   }
 }
+
+/* ── Responsive: desktop ───────────────────────────────────────────── */
 
 @media (min-width: 1024px) {
   .app-shell {
@@ -403,8 +526,8 @@ pre,
     display: grid;
     grid-template-rows: auto minmax(0, 1fr) auto;
     height: 100vh;
-    gap: 1.5rem;
-    padding: 2.2rem 2rem 1.7rem;
+    gap: 1.25rem;
+    padding: 2rem 1.25rem 1.5rem;
     overscroll-behavior: contain;
   }
 
@@ -412,65 +535,53 @@ pre,
     position: sticky;
     top: 0;
     z-index: 2;
-    padding-bottom: 1rem;
+    padding-bottom: 0.75rem;
     overflow-x: hidden;
     background: linear-gradient(
       180deg,
-      rgba(251, 247, 241, 0.97) 0%,
-      rgba(251, 247, 241, 0.94) 82%,
-      rgba(251, 247, 241, 0) 100%
+      rgba(248, 241, 232, 0.99) 0%,
+      rgba(248, 241, 232, 0.95) 80%,
+      rgba(248, 241, 232, 0) 100%
     );
-    backdrop-filter: blur(10px);
   }
 
   .app-sidebar-inner > nav {
     min-height: 0;
     overflow-y: auto;
     overflow-x: hidden;
-    padding-right: 0.35rem;
+    padding-right: 0;
   }
 
   .app-sidebar-inner > footer {
     position: sticky;
     bottom: 0;
     z-index: 2;
-    padding-top: 1rem;
+    padding-top: 0.75rem;
     overflow-x: hidden;
     background: linear-gradient(
       180deg,
-      rgba(251, 247, 241, 0) 0%,
-      rgba(251, 247, 241, 0.9) 24%,
-      rgba(251, 247, 241, 0.97) 100%
+      rgba(248, 241, 232, 0) 0%,
+      rgba(248, 241, 232, 0.95) 30%,
+      rgba(248, 241, 232, 0.99) 100%
     );
-    backdrop-filter: blur(10px);
   }
 
   .app-main-frame {
-    padding-top: 2.55rem;
+    padding-top: 2.5rem;
     padding-bottom: 4rem;
   }
 
   .app-main {
-    --frame-pad: 3.5rem;
+    --frame-pad: 3rem;
     height: 100vh;
     overflow-y: auto;
     overflow-x: hidden;
     overscroll-behavior: contain;
   }
 
-  .app-main-header::before {
-    background: linear-gradient(
-      180deg,
-      rgba(244, 237, 226, 0.985) 0%,
-      rgba(244, 237, 226, 0.965) 72%,
-      rgba(244, 237, 226, 0.8) 88%,
-      rgba(244, 237, 226, 0) 100%
-    );
-  }
-
   .app-main-header-inner {
-    padding-top: 1.6rem;
-    padding-bottom: 1.6rem;
+    padding-top: 1.4rem;
+    padding-bottom: 1.4rem;
   }
 
   .app-sidebar-inner > nav,

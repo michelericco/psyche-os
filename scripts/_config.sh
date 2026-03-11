@@ -6,6 +6,14 @@
 # Supported: claude, codex, gemini
 # Each has slightly different flags. The wrapper function below normalizes them.
 PSYCHE_CLI="${PSYCHE_CLI:-claude}"
+# Whitelist: reject any value not in the supported set to prevent command injection.
+case "$PSYCHE_CLI" in
+  claude|codex|gemini) ;;
+  *)
+    echo "ERROR: Invalid PSYCHE_CLI='$PSYCHE_CLI'. Must be: claude, codex, or gemini." >&2
+    exit 1
+    ;;
+esac
 
 # --- Source paths ---
 # Relative to the project's parent directory by default.
@@ -30,7 +38,8 @@ psyche_llm_run() {
   local input_file="$1"
   local output_file="$2"
   local max_budget="${3:-$PSYCHE_MAX_BUDGET}"
-  local log_file="/tmp/psyche-$(basename "$output_file" .json).log"
+  local log_file
+  log_file=$(mktemp "/tmp/psyche-XXXXXX.log") || { echo "ERROR: mktemp failed" >&2; return 1; }
 
   case "$PSYCHE_CLI" in
     claude)
@@ -78,11 +87,13 @@ psyche_llm_run() {
 # --- Strip markdown fences from JSON output ---
 psyche_strip_fences() {
   local file="$1"
+  # Pass the path as sys.argv[1] — never interpolate file paths into Python source code.
   python3 -c "
-import re
-text = open('$file').read()
-text = re.sub(r'^\s*\`\`\`json?\s*\n', '', text)
-text = re.sub(r'\n\s*\`\`\`\s*$', '', text)
-open('$file', 'w').write(text)
-" 2>/dev/null || true
+import sys, re
+path = sys.argv[1]
+text = open(path, encoding='utf-8').read()
+text = re.sub(r'^\s*\x60\x60\x60json?\s*\n', '', text)
+text = re.sub(r'\n\s*\x60\x60\x60\s*$', '', text)
+open(path, 'w', encoding='utf-8').write(text)
+" -- "$file" 2>/dev/null || true
 }

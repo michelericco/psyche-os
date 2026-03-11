@@ -300,7 +300,11 @@ function VectorSearchPanel({
     setExpandedResult(null)
   }, [])
 
+  const MAX_QUERY_LENGTH = 500
+
   const handleCustomSearch = useCallback(() => {
+    if (searchInput.length > MAX_QUERY_LENGTH) return
+
     // Check if the input matches a demo query
     const match = searches.find(
       s => s.query.toLowerCase() === searchInput.toLowerCase()
@@ -352,7 +356,9 @@ function VectorSearchPanel({
     s => s.query.toLowerCase() === searchInput.toLowerCase()
   )
 
-  const liveSearchCmd = `.venv/bin/python3 scripts/search-embeddings.py '${searchInput || 'your query here'}'`
+  // Escape single quotes for shell safety: ' → '\''
+  const safeQuery = (searchInput || 'your query here').replace(/'/g, "'\\''")
+  const liveSearchCmd = `.venv/bin/python3 scripts/search-embeddings.py '${safeQuery}'`
 
   return (
     <div className="space-y-6">

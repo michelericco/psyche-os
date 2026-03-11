@@ -423,11 +423,19 @@ const CYCLE_LIBRARY = {
 } as const
 
 function pickEntities(names: string[]): Entity[] {
-  return names.map(name => ENTITY_LIBRARY[name]).filter(Boolean)
+  return names.map(name => {
+    const e = ENTITY_LIBRARY[name]
+    if (!e) console.warn(`[loader] Missing entity: "${name}"`)
+    return e
+  }).filter(Boolean) as Entity[]
 }
 
 function pickThemes(labels: string[]): Theme[] {
-  return labels.map(label => THEME_LIBRARY[label]).filter(Boolean)
+  return labels.map(label => {
+    const t = THEME_LIBRARY[label]
+    if (!t) console.warn(`[loader] Missing theme: "${label}"`)
+    return t
+  }).filter(Boolean) as Theme[]
 }
 
 function createExtraction(config: {
