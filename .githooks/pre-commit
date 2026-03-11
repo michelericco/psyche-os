@@ -1,0 +1,17 @@
+#!/bin/sh
+# Optional local pre-commit hook for PSYCHE/OS.
+# Blocks commits that stage sensitive data.
+
+if [ "${SKIP_GUARDRAILS:-0}" = "1" ]; then
+  echo "[pre-commit] guardrails skipped (SKIP_GUARDRAILS=1)"
+  exit 0
+fi
+
+if [ -f "scripts/guardrails.sh" ]; then
+  echo "[pre-commit] running guardrails check..."
+  bash scripts/guardrails.sh --check-staged
+  exit $?
+fi
+
+echo "[pre-commit] scripts/guardrails.sh not found; skipping"
+exit 0

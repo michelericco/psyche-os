@@ -5,6 +5,7 @@
 Seguendo il pattern di "Applied" (dove colori immediati raccontano la storia senza leggere), **ogni dimensione in Psyche mostra uno stato visivo contestuale** attraverso un badge colorato.
 
 Il colore comunica istantaneamente il tipo di relazione con quella dimensione:
+
 - **Viola (#8b5cf6)**: Stato **Emergente** — la dimensione è ancora in fase di sviluppo/scoperta
 - **Verde (#10b981)**: Stato **Stabile** — la dimensione è consolidata e fiduciosa (score ≥ 70%)
 - **Rosso-Arancio (#f97316)**: Stato **In tensione** — ci sono blind spot o contraddizioni da risolvere
@@ -35,7 +36,7 @@ const getStatus = (score: number, blindSpot?: string): Status => {
 ### Colori Associati
 
 | Stato | Colore | Hex | Significato |
-|-------|--------|-----|-------------|
+| --- | --- | --- | --- |
 | Emergente | Viola | #8b5cf6 | In scoperta, potenziale |
 | Stabile | Verde | #10b981 | Consolidato, fiducioso |
 | In tensione | Arancio | #f97316 | Conflitto, da esplorare |

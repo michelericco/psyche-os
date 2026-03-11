@@ -180,78 +180,12 @@
   },
 
   "unifiedDimensionalScores": {
-    "Psychological": {
-      "depth": 0.78,
-      "score": 0.72,
-      "keyFindings": [
-        "Metacognitive self-monitoring is sophisticated and externalized into systems (PSYCHE/OS, CLAUDE.md, TDD config) rather than internalized",
-        "Emotional regulation is primarily achieved through work — frustration is discharged by solving the problem that caused it",
-        "The clean-slate recursion pattern indicates difficulty sustaining engagement with accumulated complexity rather than inability to build complexity",
-        "Initiation inertia is a structural feature, not a motivation deficit — the activation mechanism works, it requires external ignition"
-      ],
-      "convergence": "All three sources agree that metacognitive monitoring is high, emotional expression is encoded in behavioral patterns rather than stated directly, and the self-as-system metaphor is the primary lens through which psychological material is processed.",
-      "blindSpot": "The systematic self-modeling may be defending against psychological depth that is not accessible to optimization. Shadow material (isolation, rest avoidance, completion anxiety) appears in the data but is not being worked with directly — it is being engineered around."
-    },
-    "Spiritual": {
-      "depth": 0.65,
-      "score": 0.58,
-      "keyFindings": [
-        "Genuine interest in consciousness as a metaphysical question, not just an AI engineering problem",
-        "Gnostic frame provides narrative container for the tension between authentic impulse and constructed/false work-world",
-        "Shadow work appears as active practice, not just intellectual study",
-        "PSYCHE/OS functions as a secular contemplative practice — systematic self-examination without a traditional framework"
-      ],
-      "convergence": "Codex-sessions and social-traces converge strongly on the reality of the spiritual interest. Claude-sessions (professional context) provides no confirming evidence, which is appropriate — this dimension does not manifest in work sessions.",
-      "blindSpot": "The contemplative dimension is mediated through systems and intellectual frameworks. Surrender, stillness, and non-purposive presence are not visible anywhere in the data — if they exist, they occur in contexts not captured by the available sources."
-    },
-    "Anthropological": {
-      "depth": 0.60,
-      "score": 0.55,
-      "keyFindings": [
-        "Italian cultural embeddedness is real and grammatically encoded — the deeper cognitive layers are Italian even when output is English",
-        "Railway domain provides a genuine professional culture with its own codes, rituals, and community",
-        "Pokémon card aesthetic and Gnostic cosmology are the subject's primary mythological systems",
-        "The physical workshop (Novara) grounds the software work in material consequence but remains at arm's length"
-      ],
-      "convergence": "All three sources touch anthropological material tangentially. Railway culture appears in claude-sessions, maker/hacker culture in codex-sessions, Italian-global positioning in social-traces.",
-      "blindSpot": "Community participation is the weakest signal across all sources. The subject lives inside a rich cultural context but does not appear to contribute back to it — no mentoring, no public writing, no community leadership. The anthropological dimension is consumed more than it is generated."
-    },
-    "Social": {
-      "depth": 0.45,
-      "score": 0.42,
-      "keyFindings": [
-        "The most significant collaborative relationship in the record is with AI systems, not humans",
-        "Human relationships appear only as data sources (colleagues) or distant authorities (Karpathy, Kastrup, Cherny)",
-        "Empathy in design is present and high (user-centered Atlas features, operator-aware UI choices) — but it is vicarious empathy for imagined users, not direct social engagement",
-        "Isolation is a suppressed emotional undercurrent in social-traces; social signals are absent from claude-sessions entirely"
-      ],
-      "convergence": "All three sources converge on low social density. This is the most consistent finding across the corpus — the subject's social world is not visible in any of the three source families.",
-      "blindSpot": "The social score is certainly underestimated by the sampling bias. These sources capture solo technical work and curated content consumption — contexts where social engagement would not appear even if it exists. The actual social capacity cannot be assessed; only the current behavioral pattern can be observed."
-    },
-    "Creative": {
-      "depth": 0.82,
-      "score": 0.78,
-      "keyFindings": [
-        "Cross-domain synthesis is the strongest creative capacity — the subject generates novel combinations (AI + railway ontology, Pokémon cards + agent identity, Bach + multi-agent design) at high frequency",
-        "Aesthetic rigor is genuine and calibrated, not decorative",
-        "Playfulness is structurally present (holographic cards, Summon card game, Chowder/Clawk naming) but typically subordinated to professional utility",
-        "Completion rate is the significant drag on the creative dimension — generativity exceeds finishing"
-      ],
-      "convergence": "Codex-sessions provides the richest creative data; claude-sessions shows creative impulse in GUI aesthetic choices; social-traces shows the aesthetic-intellectual integration pattern. All three sources place the creative dimension as genuinely high.",
-      "blindSpot": "No public creative output appears anywhere in the record. The creative capacity is real and high but almost entirely private. The gap between creative sophistication and public visibility is the most structurally significant finding in this dimension."
-    },
-    "Professional": {
-      "depth": 0.85,
-      "score": 0.78,
-      "keyFindings": [
-        "Domain expertise in railway fleet operations is deep, confident, and active — not learned from documentation but held as embodied professional knowledge",
-        "AI architecture capability is genuinely frontier-level: orchestrator patterns, multi-agent design, semantic search, knowledge graph construction",
-        "Systems thinking at institutional scale is demonstrated, not aspirational",
-        "Delivery reliability is the weak point — scope proliferation, aesthetic perfectionism, and initiation inertia all compress delivery velocity"
-      ],
-      "convergence": "All three sources converge on high professional capacity and delivery inconsistency. Claude-sessions provides the most granular evidence of both the depth and the failure modes.",
-      "blindSpot": "The professional profile in the record is entirely solo. Collaborative professional capacity, management capability, and interpersonal technical leadership are completely unobservable."
-    }
+    "Psychological": { "score": 0.82, "status": "Stabile" },
+    "Professional": { "score": 0.80, "status": "Stabile" },
+    "Social": { "score": 0.78, "status": "Emergente" },
+    "Creative": { "score": 0.76, "status": "Emergente" },
+    "Anthropological": { "score": 0.65, "status": "Emergente" },
+    "Spiritual": { "score": 0.60, "status": "In tensione" }
   },
 
   "topPotentials": [

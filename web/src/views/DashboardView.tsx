@@ -1,339 +1,200 @@
-import { useState, useEffect } from 'react'
+import { useMemo, useState } from 'react'
 import { SectionHead } from '../components/shared'
 import { LinkIcon, CogIcon, ChartIcon, SearchIcon } from '../components/icons'
-import { ForestBanner, KodamaRow, MiyazakiBackground } from '../components/MiyazakiDecor'
 import { crossValidatedPatterns, dimensionalScores, narrativeArc } from '../data/loader'
+import { useI18n } from '../i18n'
+
+type DimensionStat = { name: string; score: number }
 
 export default function DashboardView() {
+  const { t } = useI18n()
   const [name, setName] = useState('')
   const [goal, setGoal] = useState('')
-  const [progress, setProgress] = useState(0)
 
   const navigate = (view: string) => {
     window.dispatchEvent(new CustomEvent('navigate', { detail: view }))
   }
 
-  // Get narrative phase from synthesis data
-  const narrativePhase = narrativeArc?.currentChapter || 'Exploring'
-
-  // Categorize dimensions into Active vs Exploring based on scores
-  const dimensionCategories = {
-    active: [] as Array<{ name: string; score: number }>,
-    exploring: [] as Array<{ name: string; score: number }>,
-  }
-
-  Object.entries(dimensionalScores).forEach(([dimension, data]) => {
-    const score = data.score || 0
-    const item = { name: dimension, score }
-    // Dimensions with score > 0.5 are "active", others are "exploring"
-    if (score > 0.5) {
-      dimensionCategories.active.push(item)
-    } else {
-      dimensionCategories.exploring.push(item)
-    }
-  })
-
-  // Get recent patterns (first 4 most confident)
-  const recentPatterns = crossValidatedPatterns
-    .slice(0, 4)
-    .map(p => ({
-      id: p.id,
-      label: p.label,
-      confidence: p.confidence,
-      dimension: p.dimension,
+  const stats = useMemo(() => {
+    const dimensions = Object.entries(dimensionalScores).map(([k, v]) => ({
+      name: k,
+      score: v.score ?? 0,
     }))
 
-  useEffect(() => {
-    let p = 0
-    if (name) p += 50
-    if (goal) p += 50
-    setProgress(p)
-  }, [name, goal])
+    const active = dimensions.filter(d => d.score >= 0.5)
+    const exploring = dimensions.filter(d => d.score < 0.5)
+    const patterns = crossValidatedPatterns.slice(0, 4)
+    const progress = (name ? 50 : 0) + (goal ? 50 : 0)
+
+    return {
+      active,
+      exploring,
+      patterns,
+      progress,
+      chapter: narrativeArc?.currentChapter ?? t('dashboard.stat.narrative'),
+    }
+  }, [name, goal, t])
 
   return (
-    <>
-      <MiyazakiBackground />
+    <div className="mx-auto w-full max-w-[88rem] space-y-10 px-4 py-10 sm:px-8 lg:px-12">
+      <SectionHead
+        title={t('dashboard.title')}
+        subtitle={t('dashboard.subtitle')}
+      />
 
-      <div
-        style={{
-          position: 'relative',
-          zIndex: 1,
-          maxWidth: '38rem',
-          margin: '0 auto',
-          padding: '3rem 1.25rem 4rem',
-        }}
-      >
-        {/* Top greeting with name + narrative phase */}
-        {name && (
-          <div
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              marginBottom: '2rem',
-              padding: '1.25rem 1.4rem',
-              background: 'linear-gradient(135deg, rgba(255, 240, 220, 0.6), rgba(245, 237, 224, 0.8))',
-              border: '1px solid var(--line)',
-              borderRadius: '14px',
-            }}
-          >
-            <div>
-              <p style={{ margin: 0, fontSize: '0.78rem', color: 'var(--ink-faint)', fontWeight: 500, letterSpacing: '0.05em', textTransform: 'uppercase', marginBottom: '0.35rem' }}>
-                Ciao
-              </p>
-              <p style={{ margin: 0, fontSize: '1.35rem', fontWeight: 700, color: 'var(--ink)' }}>
-                {name} <span style={{ fontSize: '1.2rem' }}>✦</span>
-              </p>
-            </div>
-            <div style={{ textAlign: 'right' }}>
-              <p style={{ margin: 0, fontSize: '0.74rem', color: 'var(--ink-faint)', fontWeight: 500, letterSpacing: '0.05em', textTransform: 'uppercase', marginBottom: '0.35rem' }}>
-                Current phase
-              </p>
-              <p style={{ margin: 0, fontSize: '1rem', fontWeight: 600, color: 'var(--accent)' }}>
-                {narrativePhase}
-              </p>
-            </div>
-          </div>
-        )}
+      <section className="grid grid-cols-1 gap-4 md:grid-cols-4">
+        <StatCard label={t('dashboard.stat.profile')} value={`${stats.progress}%`} hint={t('dashboard.stat.completion')} />
+        <StatCard label={t('dashboard.stat.phase')} value={stats.chapter} hint={t('dashboard.stat.narrative')} />
+        <StatCard label={t('dashboard.stat.active')} value={String(stats.active.length)} hint={t('dashboard.stat.dimensions')} />
+        <StatCard label={t('dashboard.stat.signals')} value={String(stats.patterns.length)} hint={t('dashboard.stat.topPatterns')} />
+      </section>
 
-        <ForestBanner />
+      <section className="grid grid-cols-1 gap-6 xl:grid-cols-[1.1fr_1.3fr]">
+        <div className="rounded-2xl border border-[color:var(--line)] bg-[color:var(--panel)] p-6 shadow-[var(--shadow-card)]">
+          <h3 className="text-lg font-semibold text-[color:var(--ink)]">{t('dashboard.profileSetup')}</h3>
+          <p className="mt-1 text-sm text-[color:var(--ink-faint)]">{t('dashboard.profileHint')}</p>
 
-        <SectionHead
-          title="Your dashboard"
-          subtitle="Personalize your space, then pick a quick action to begin"
-        />
-
-        {/* Profile progress */}
-        <div style={{ marginTop: '1.5rem', marginBottom: '2rem' }}>
-          <div style={{ height: '4px', borderRadius: '999px', background: 'var(--line)', overflow: 'hidden' }}>
-            <div
-              style={{
-                height: '100%',
-                width: `${progress}%`,
-                background: 'linear-gradient(90deg, var(--accent), #d4622a)',
-                borderRadius: '999px',
-              }}
-            />
-          </div>
-          <p style={{ marginTop: '0.4rem', fontSize: '0.7rem', color: 'var(--ink-faint)', letterSpacing: '0.1em' }}>
-            Profile {progress}% complete
-          </p>
-        </div>
-
-        {/* Inputs */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '1.1rem', marginBottom: '2.25rem' }}>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.45rem' }}>
-            <label style={{ fontSize: '0.69rem', fontWeight: 600, letterSpacing: '0.18em', textTransform: 'uppercase', color: 'var(--ink-faint)' }}>
-              Name
-            </label>
-            <input
-              type="text"
+          <div className="mt-5 space-y-4">
+            <Field
+              label={t('dashboard.name')}
               value={name}
-              onChange={e => setName(e.target.value)}
-              style={{ width: '100%' }}
-              placeholder="What should we call you?"
+              placeholder={t('dashboard.namePlaceholder')}
+              onChange={setName}
             />
-          </div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.45rem' }}>
-            <label style={{ fontSize: '0.69rem', fontWeight: 600, letterSpacing: '0.18em', textTransform: 'uppercase', color: 'var(--ink-faint)' }}>
-              Today's goal
-            </label>
-            <input
-              type="text"
+            <Field
+              label={t('dashboard.goal')}
               value={goal}
-              onChange={e => setGoal(e.target.value)}
-              style={{ width: '100%' }}
-              placeholder="E.g. analyze my conversations, explore archetypes…"
+              placeholder={t('dashboard.goalPlaceholder')}
+              onChange={setGoal}
+            />
+          </div>
+
+          <div className="mt-6 h-2 overflow-hidden rounded-full bg-[color:var(--line)]">
+            <div
+              className="h-full rounded-full bg-[color:var(--accent)] transition-[width] duration-300"
+              style={{ width: `${stats.progress}%` }}
             />
           </div>
         </div>
 
-        {/* Quick actions */}
-        <div style={{ marginBottom: '0.5rem' }}>
-          <p style={{ fontSize: '0.69rem', fontWeight: 600, letterSpacing: '0.18em', textTransform: 'uppercase', color: 'var(--ink-faint)', marginBottom: '0.85rem' }}>
-            Quick actions
-          </p>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '0.65rem' }}>
-            <MenuCard icon={<LinkIcon />}   label="Connect data"     sub="Link sources"         onClick={() => navigate('sources')}  />
-            <MenuCard icon={<CogIcon />}    label="Run pipeline"     sub="Extract & synthesize" onClick={() => navigate('sources')}  />
-            <MenuCard icon={<ChartIcon />}  label="View overview"    sub="System map"           onClick={() => navigate('overview')} />
-            <MenuCard icon={<SearchIcon />} label="Explore patterns" sub="Behavioral signals"   onClick={() => navigate('patterns')} />
+        <div className="rounded-2xl border border-[color:var(--line)] bg-[color:var(--panel-soft)] p-6 shadow-[var(--shadow-card)]">
+          <h3 className="text-lg font-semibold text-[color:var(--ink)]">{t('dashboard.quickActions')}</h3>
+          <p className="mt-1 text-sm text-[color:var(--ink-faint)]">{t('dashboard.quickHint')}</p>
+
+          <div className="mt-5 grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <MenuCard icon={<LinkIcon />} label={t('dashboard.action.connect')} sub={t('dashboard.action.connectSub')} onClick={() => navigate('sources')} />
+            <MenuCard icon={<CogIcon />} label={t('dashboard.action.run')} sub={t('dashboard.action.runSub')} onClick={() => navigate('sources')} />
+            <MenuCard icon={<ChartIcon />} label={t('dashboard.action.overview')} sub={t('dashboard.action.overviewSub')} onClick={() => navigate('overview')} />
+            <MenuCard icon={<SearchIcon />} label={t('dashboard.action.patterns')} sub={t('dashboard.action.patternsSub')} onClick={() => navigate('patterns')} />
           </div>
         </div>
+      </section>
 
-        {/* Kodama row */}
-        <KodamaRow />
+      <section className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+        <DimensionBlock title={t('dashboard.activeDimensions')} data={stats.active} tone="active" />
+        <DimensionBlock title={t('dashboard.exploringDimensions')} data={stats.exploring} tone="soft" />
+      </section>
 
-        {/* Dimension Cards: Active vs Exploring */}
-        {name && (
-          <div style={{ marginTop: '2.5rem', marginBottom: '2.5rem' }}>
-            <p style={{ fontSize: '0.69rem', fontWeight: 600, letterSpacing: '0.18em', textTransform: 'uppercase', color: 'var(--ink-faint)', marginBottom: '1rem' }}>
-              Your dimensions
-            </p>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '1rem' }}>
-              {/* Active Dimensions Card */}
-              <div
-                style={{
-                  padding: '1.25rem 1.4rem',
-                  background: 'var(--paper-strong)',
-                  border: '1px solid var(--line)',
-                  borderRadius: '14px',
-                  boxShadow: 'var(--shadow-card)',
-                }}
-              >
-                <p style={{ margin: '0 0 0.6rem 0', fontSize: '0.74rem', fontWeight: 600, color: 'var(--accent)', letterSpacing: '0.05em', textTransform: 'uppercase' }}>
-                  Active ({dimensionCategories.active.length})
-                </p>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                  {dimensionCategories.active.slice(0, 3).map(dim => (
-                    <div key={dim.name} style={{ fontSize: '0.82rem', color: 'var(--ink)', lineHeight: 1.4 }}>
-                      <span style={{ fontWeight: 500 }}>{dim.name}</span>
-                      <br />
-                      <span style={{ fontSize: '0.72rem', color: 'var(--ink-soft)' }}>
-                        {(dim.score * 100).toFixed(0)}%
-                      </span>
-                    </div>
-                  ))}
-                </div>
-              </div>
+      <section className="rounded-2xl border border-[color:var(--line)] bg-[color:var(--panel)] p-6 shadow-[var(--shadow-card)]">
+        <h3 className="text-lg font-semibold text-[color:var(--ink)]">{t('dashboard.recentSignals')}</h3>
+        <div className="mt-4 flex flex-wrap gap-2">
+          {stats.patterns.map(pattern => (
+            <button
+              key={pattern.id}
+              onClick={() => navigate('patterns')}
+              className="rounded-full border border-[color:var(--line-strong)] bg-[color:var(--paper-strong)] px-3 py-1 text-sm text-[color:var(--ink-soft)] transition-colors hover:border-[color:var(--accent)] hover:text-[color:var(--accent)]"
+            >
+              {pattern.label}
+            </button>
+          ))}
+        </div>
+      </section>
+    </div>
+  )
+}
 
-              {/* Exploring Dimensions Card */}
-              <div
-                style={{
-                  padding: '1.25rem 1.4rem',
-                  background: 'var(--paper-strong)',
-                  border: '1px solid var(--line)',
-                  borderRadius: '14px',
-                  boxShadow: 'var(--shadow-card)',
-                }}
-              >
-                <p style={{ margin: '0 0 0.6rem 0', fontSize: '0.74rem', fontWeight: 600, color: 'var(--ink-faint)', letterSpacing: '0.05em', textTransform: 'uppercase' }}>
-                  Exploring ({dimensionCategories.exploring.length})
-                </p>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                  {dimensionCategories.exploring.slice(0, 3).map(dim => (
-                    <div key={dim.name} style={{ fontSize: '0.82rem', color: 'var(--ink-soft)', lineHeight: 1.4 }}>
-                      <span style={{ fontWeight: 500 }}>{dim.name}</span>
-                      <br />
-                      <span style={{ fontSize: '0.72rem', color: 'var(--ink-faint)' }}>
-                        {(dim.score * 100).toFixed(0)}%
-                      </span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
+function Field({
+  label,
+  value,
+  placeholder,
+  onChange,
+}: {
+  label: string
+  value: string
+  placeholder: string
+  onChange: (v: string) => void
+}) {
+  return (
+    <label className="block">
+      <span className="mb-1 block text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--ink-faint)]">
+        {label}
+      </span>
+      <input
+        type="text"
+        value={value}
+        onChange={e => onChange(e.target.value)}
+        placeholder={placeholder}
+        className="block w-full rounded-lg border border-[color:var(--line-strong)] bg-white px-3 py-2"
+      />
+    </label>
+  )
+}
 
-        {/* Recent Patterns List */}
-        {name && recentPatterns.length > 0 && (
-          <div style={{ marginTop: '2.5rem' }}>
-            <p style={{ fontSize: '0.69rem', fontWeight: 600, letterSpacing: '0.18em', textTransform: 'uppercase', color: 'var(--ink-faint)', marginBottom: '1rem' }}>
-              Pattern elaborations
-            </p>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-              {recentPatterns.map(pattern => (
-                <button
-                  key={pattern.id}
-                  onClick={() => navigate('patterns')}
-                  style={{
-                    padding: '1rem 1.25rem',
-                    background: 'var(--paper-strong)',
-                    border: '1px solid var(--line)',
-                    borderRadius: '10px',
-                    textAlign: 'left',
-                    cursor: 'pointer',
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
-                  }}
-                  onMouseEnter={e => {
-                    const el = e.currentTarget as HTMLButtonElement
-                    el.style.boxShadow = 'var(--shadow-hover)'
-                    el.style.background = 'rgba(255, 240, 220, 0.5)'
-                  }}
-                  onMouseLeave={e => {
-                    const el = e.currentTarget as HTMLButtonElement
-                    el.style.boxShadow = 'var(--shadow-card)'
-                    el.style.background = 'var(--paper-strong)'
-                  }}
-                >
-                  <div>
-                    <p style={{ margin: 0, fontSize: '0.9rem', fontWeight: 500, color: 'var(--ink)' }}>
-                      {pattern.label}
-                    </p>
-                    <p style={{ margin: '0.35rem 0 0 0', fontSize: '0.74rem', color: 'var(--ink-faint)' }}>
-                      {pattern.dimension}
-                    </p>
-                  </div>
-                  <div style={{ textAlign: 'right' }}>
-                    <span style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--accent)' }}>
-                      {(pattern.confidence * 100).toFixed(0)}%
-                    </span>
-                  </div>
-                </button>
-              ))}
-            </div>
-          </div>
-        )}
-      </div>
-    </>
+function StatCard({ label, value, hint }: { label: string; value: string; hint: string }) {
+  return (
+    <div className="rounded-xl border border-[color:var(--line)] bg-[color:var(--panel)] px-4 py-3 shadow-[var(--shadow-card)]">
+      <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[color:var(--ink-faint)]">{label}</p>
+      <p className="mt-1 text-2xl font-semibold text-[color:var(--ink)]">{value}</p>
+      <p className="text-sm text-[color:var(--ink-faint)]">{hint}</p>
+    </div>
   )
 }
 
 function MenuCard({
+  icon,
   label,
   sub,
-  icon,
   onClick,
 }: {
+  icon: React.ReactNode
   label: string
-  sub?: string
-  icon?: React.ReactNode
+  sub: string
   onClick: () => void
 }) {
   return (
     <button
       onClick={onClick}
-      style={{
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'flex-start',
-        padding: '1rem 1.1rem',
-        background: 'var(--paper-strong)',
-        border: '1px solid var(--line)',
-        borderRadius: '14px',
-        boxShadow: 'var(--shadow-card)',
-        cursor: 'pointer',
-        textAlign: 'left',
-        width: '100%',
-        gap: '0.5rem',
-      }}
-      onMouseEnter={e => {
-        const el = e.currentTarget as HTMLButtonElement
-        el.style.boxShadow = 'var(--shadow-hover)'
-        el.style.transform = 'translateY(-2px)'
-      }}
-      onMouseLeave={e => {
-        const el = e.currentTarget as HTMLButtonElement
-        el.style.boxShadow = 'var(--shadow-card)'
-        el.style.transform = 'translateY(0)'
-      }}
+      className="rounded-xl border border-[color:var(--line)] bg-[color:var(--paper-strong)] p-4 text-left shadow-[var(--shadow-card)] transition-transform duration-200 hover:-translate-y-[1px] hover:shadow-[var(--shadow-hover)]"
     >
-      {icon && (
-        <span style={{ color: 'var(--accent)', opacity: 0.8, display: 'block', lineHeight: 1 }}>
-          {icon}
-        </span>
-      )}
-      <span style={{ fontSize: '0.9rem', fontWeight: 600, color: 'var(--ink)', display: 'block' }}>
-        {label}
-      </span>
-      {sub && (
-        <span style={{ marginTop: '0.15rem', fontSize: '0.74rem', color: 'var(--ink-faint)', display: 'block' }}>
-          {sub}
-        </span>
-      )}
+      <span className="mb-2 inline-flex text-[color:var(--accent)]">{icon}</span>
+      <span className="block text-base font-semibold text-[color:var(--ink)]">{label}</span>
+      <span className="mt-0.5 block text-sm text-[color:var(--ink-faint)]">{sub}</span>
     </button>
+  )
+}
+
+function DimensionBlock({
+  title,
+  data,
+  tone,
+}: {
+  title: string
+  data: DimensionStat[]
+  tone: 'active' | 'soft'
+}) {
+  const color = tone === 'active' ? 'text-[color:var(--accent)]' : 'text-[color:var(--ink-soft)]'
+
+  return (
+    <div className="rounded-2xl border border-[color:var(--line)] bg-[color:var(--panel)] p-6 shadow-[var(--shadow-card)]">
+      <h3 className={`text-lg font-semibold ${color}`}>{title}</h3>
+      <div className="mt-4 space-y-3">
+        {data.slice(0, 4).map(item => (
+          <div key={item.name} className="flex items-center justify-between rounded-lg bg-[color:var(--paper-strong)] px-3 py-2">
+            <span className="text-sm text-[color:var(--ink)]">{item.name}</span>
+            <span className="text-sm font-medium text-[color:var(--ink-faint)]">{Math.round(item.score * 100)}%</span>
+          </div>
+        ))}
+      </div>
+    </div>
   )
 }

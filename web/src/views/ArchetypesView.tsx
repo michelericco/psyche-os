@@ -1,3 +1,4 @@
+import { useMemo, useState } from 'react'
 import { archetypeMapping } from '../data/loader'
 import type { ArchetypeEntry } from '../data/types'
 import {
@@ -42,6 +43,9 @@ function ArchetypeDiagram() {
   const cy = 200
   const r = 120
 
+  const [hoveredRole, setHoveredRole] = useState<ArchetypeRole | null>(null)
+  const [pointer, setPointer] = useState({ x: cx, y: cy, active: false })
+
   const nodes: { role: ArchetypeRole; x: number; y: number }[] = [
     { role: 'dominant', x: cx, y: cy - r },
     { role: 'secondary', x: cx + r, y: cy },
@@ -49,35 +53,102 @@ function ArchetypeDiagram() {
     { role: 'goldenShadow', x: cx - r, y: cy },
   ]
 
+  const roleByDistance = useMemo(() => {
+    const distances = nodes.map((node) => {
+      const dx = pointer.x - node.x
+      const dy = pointer.y - node.y
+      return { role: node.role, distance: Math.hypot(dx, dy) }
+    })
+    const nearest = distances.sort((a, b) => a.distance - b.distance)[0]
+    if (!nearest || nearest.distance > 100) return null
+    return nearest.role
+  }, [nodes, pointer.x, pointer.y])
+
+  const activeRole = hoveredRole ?? roleByDistance
+  const pointerDx = pointer.active ? (pointer.x - cx) / 40 : 0
+  const pointerDy = pointer.active ? (pointer.y - cy) / 40 : 0
+  const activeEntry = activeRole ? archetypeMapping[activeRole] : null
+
+  const handlePointerMove: React.PointerEventHandler<SVGSVGElement> = (e) => {
+    const rect = e.currentTarget.getBoundingClientRect()
+    const x = ((e.clientX - rect.left) / rect.width) * 480
+    const y = ((e.clientY - rect.top) / rect.height) * 400
+    setPointer({ x, y, active: true })
+  }
+
+  const handlePointerLeave = () => {
+    setPointer({ x: cx, y: cy, active: false })
+    setHoveredRole(null)
+  }
+
   return (
-    <div className="flex justify-center py-4">
+    <div className="flex flex-col items-center py-4 gap-3">
       <svg
         viewBox="0 0 480 400"
-        className="w-full max-w-md"
+        className="w-full max-w-md cursor-crosshair"
         xmlns="http://www.w3.org/2000/svg"
+        onPointerMove={handlePointerMove}
+        onPointerLeave={handlePointerLeave}
       >
+        <defs>
+          <radialGradient id="archetypeGlow" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stopColor="#38bdf8" stopOpacity="0.2" />
+            <stop offset="100%" stopColor="#38bdf8" stopOpacity="0" />
+          </radialGradient>
+        </defs>
+
+        {/* Cursor-reactive ambient glow */}
+        <circle
+          cx={pointer.x}
+          cy={pointer.y}
+          r={pointer.active ? 80 : 0}
+          fill="url(#archetypeGlow)"
+          style={{ transition: 'r 200ms ease-out' }}
+        />
+
         {/* Diamond lines */}
         <polygon
           points={nodes.map((n) => `${n.x},${n.y}`).join(' ')}
           fill="none"
-          stroke="#334155"
-          strokeWidth="0.5"
+          stroke={activeRole ? ROLE_CONFIG[activeRole].svgColor : '#334155'}
+          strokeWidth={activeRole ? '0.9' : '0.5'}
+          opacity={activeRole ? 0.9 : 1}
+          style={{ transition: 'all 180ms ease-out' }}
         />
 
         {/* Cross lines through center */}
-        <line x1={nodes[0].x} y1={nodes[0].y} x2={nodes[2].x} y2={nodes[2].y} stroke="#334155" strokeWidth="0.5" />
-        <line x1={nodes[1].x} y1={nodes[1].y} x2={nodes[3].x} y2={nodes[3].y} stroke="#334155" strokeWidth="0.5" />
+        <line
+          x1={nodes[0].x}
+          y1={nodes[0].y}
+          x2={nodes[2].x}
+          y2={nodes[2].y}
+          stroke="#334155"
+          strokeWidth={activeRole === 'dominant' || activeRole === 'emergent' ? '0.9' : '0.5'}
+          opacity={activeRole ? 0.8 : 1}
+          style={{ transition: 'all 180ms ease-out' }}
+        />
+        <line
+          x1={nodes[1].x}
+          y1={nodes[1].y}
+          x2={nodes[3].x}
+          y2={nodes[3].y}
+          stroke="#334155"
+          strokeWidth={activeRole === 'secondary' || activeRole === 'goldenShadow' ? '0.9' : '0.5'}
+          opacity={activeRole ? 0.8 : 1}
+          style={{ transition: 'all 180ms ease-out' }}
+        />
 
         {/* Center label */}
         <text
-          x={cx}
-          y={cy}
+          x={cx + pointerDx}
+          y={cy + pointerDy}
           textAnchor="middle"
           dominantBaseline="central"
           fill="#94a3b8"
           fontSize="10"
           fontWeight="500"
           letterSpacing="0.2em"
+          style={{ transition: 'all 140ms ease-out' }}
         >
           SELF
         </text>
@@ -93,35 +164,56 @@ function ArchetypeDiagram() {
 
           const labelParts = config.label.split(' ')
           const isMultiWordLabel = labelParts.length > 1
+          const isActive = activeRole === role
+          const emphasis = isActive ? 1 : activeRole ? 0.45 : 1
+
+          const nodeDx = pointer.active ? (pointer.x - x) / -30 : 0
+          const nodeDy = pointer.active ? (pointer.y - y) / -30 : 0
 
           return (
-            <g key={role}>
+            <g
+              key={role}
+              opacity={emphasis}
+              onPointerEnter={() => setHoveredRole(role)}
+              onPointerLeave={() => setHoveredRole(null)}
+              style={{ transition: 'opacity 180ms ease-out' }}
+            >
+              <circle
+                cx={x}
+                cy={y}
+                r={isActive ? 22 : 16}
+                fill={config.svgColor}
+                opacity={isActive ? 0.18 : 0.08}
+                style={{ transition: 'all 180ms ease-out' }}
+              />
               <text
-                x={x + offsetX}
-                y={y + offsetY - (isMultiWordLabel ? 14 : 8)}
+                x={x + offsetX + nodeDx}
+                y={y + offsetY - (isMultiWordLabel ? 14 : 8) + nodeDy}
                 textAnchor={anchor}
                 dominantBaseline="central"
                 fill="#64748b"
                 fontSize="8"
                 letterSpacing="0.15em"
+                style={{ transition: 'all 140ms ease-out' }}
               >
                 {isMultiWordLabel ? (
                   <>
-                    <tspan x={x + offsetX} dy="0">{labelParts[0]}</tspan>
-                    <tspan x={x + offsetX} dy="10">{labelParts.slice(1).join(' ')}</tspan>
+                    <tspan x={x + offsetX + nodeDx} dy="0">{labelParts[0]}</tspan>
+                    <tspan x={x + offsetX + nodeDx} dy="10">{labelParts.slice(1).join(' ')}</tspan>
                   </>
                 ) : (
                   config.label
                 )}
               </text>
               <text
-                x={x + offsetX}
-                y={y + offsetY + (isMultiWordLabel ? 12 : 6)}
+                x={x + offsetX + nodeDx}
+                y={y + offsetY + (isMultiWordLabel ? 12 : 6) + nodeDy}
                 textAnchor={anchor}
                 dominantBaseline="central"
                 fill={config.svgColor}
-                fontSize="11"
+                fontSize={isActive ? '12' : '11'}
                 fontWeight="500"
+                style={{ transition: 'all 160ms ease-out' }}
               >
                 {entry.archetype}
               </text>
@@ -129,6 +221,26 @@ function ArchetypeDiagram() {
           )
         })}
       </svg>
+
+      <div className="w-full max-w-md min-h-16 rounded-lg border border-[color:var(--line)] bg-[color:var(--surface)]/40 px-3 py-2">
+        {activeEntry && activeRole ? (
+          <>
+            <div className="flex items-center justify-between gap-3">
+              <span className="text-[10px] tracking-wider" style={{ color: ROLE_CONFIG[activeRole].svgColor }}>
+                {ROLE_CONFIG[activeRole].label}
+              </span>
+              <span className="text-xs text-[color:var(--ink)]">{activeEntry.archetype}</span>
+            </div>
+            <p className="mt-1 text-xs text-[color:var(--ink-faint)] leading-relaxed">
+              {activeEntry.manifestation}
+            </p>
+          </>
+        ) : (
+          <p className="text-xs text-[color:var(--ink-faint)] leading-relaxed">
+            Muovi il mouse sulla mappa per esplorare gli archetipi e vedere come cambiano focus e relazioni.
+          </p>
+        )}
+      </div>
     </div>
   )
 }
