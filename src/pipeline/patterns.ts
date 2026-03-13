@@ -1,5 +1,11 @@
 import { z } from "zod";
 import type { ExtractionResult } from "./extract.js";
+import {
+  stratifyTemporally,
+  TemporalLayerSchema,
+  type TemporalGranularity,
+  type TemporalLayer,
+} from "./temporal.js";
 
 // ---------------------------------------------------------------------------
 // Pattern detection result schemas
@@ -40,6 +46,17 @@ export const PatternDetectionResultSchema = z.object({
   sabotageIndicators: z.array(SabotageIndicatorSchema),
   projections: z.array(ProjectionAnalysisSchema),
   cycles: z.array(CycleDetectionSchema),
+  /**
+   * Temporal stratification at monthly granularity (default view).
+   * Provides a time-layered view of how patterns evolve across the corpus.
+   * Use `temporalLayers` for access to all granularities.
+   */
+  temporalLayer: TemporalLayerSchema,
+  /**
+   * Temporal stratification at all four granularities (day, week, month, quarter).
+   * Keyed by granularity string. Serialised as a plain object for JSON compatibility.
+   */
+  temporalLayers: z.record(z.string(), TemporalLayerSchema),
   timestamp: z.string().datetime(),
 });
 
@@ -98,17 +115,24 @@ export async function analyzeProjections(
 export async function detectCycles(
   _extractions: readonly ExtractionResult[]
 ): Promise<readonly CycleDetection[]> {
-  // TODO: Implement temporal pattern detection
+  // TODO: Implement Claude-based cycle detection
   return [];
 }
 
 /**
  * Run all pattern detection analyses on a set of extraction results.
+ *
+ * Includes temporal stratification at all four granularities (day, week,
+ * month, quarter). The default `temporalLayer` field uses monthly granularity
+ * as the primary view; `temporalLayers` exposes all four.
+ *
  * @param extractions - The extraction results to analyze
- * @returns Combined pattern detection result
+ * @param temporalGranularity - Primary granularity for `temporalLayer` (default: "month")
+ * @returns Combined pattern detection result with temporal layers
  */
 export async function detectAllPatterns(
-  extractions: readonly ExtractionResult[]
+  extractions: readonly ExtractionResult[],
+  temporalGranularity: TemporalGranularity = "month"
 ): Promise<PatternDetectionResult> {
   const [sabotageIndicators, projections, cycles] = await Promise.all([
     detectSelfSabotage(extractions),
@@ -116,11 +140,22 @@ export async function detectAllPatterns(
     detectCycles(extractions),
   ]);
 
+  // Compute temporal stratification at all granularities
+  const granularities: TemporalGranularity[] = ["day", "week", "month", "quarter"];
+  const temporalLayers: Record<string, TemporalLayer> = {};
+  for (const g of granularities) {
+    temporalLayers[g] = stratifyTemporally(extractions, g);
+  }
+
+  const temporalLayer = temporalLayers[temporalGranularity]!;
+
   return PatternDetectionResultSchema.parse({
     sourceIds: extractions.map((e) => e.sourceId),
     sabotageIndicators: [...sabotageIndicators],
     projections: [...projections],
     cycles: [...cycles],
+    temporalLayer,
+    temporalLayers,
     timestamp: new Date().toISOString(),
   });
 }

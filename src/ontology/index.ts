@@ -52,3 +52,20 @@ export {
 } from "./levels.js";
 
 export type { AccessLevelSpec } from "./levels.js";
+
+// Temporal stratification
+export {
+  TemporalGranularity,
+  TemporalTrend,
+  TemporalWindowSchema,
+  TemporalPatternSchema,
+  TemporalLayerSchema,
+  stratifyTemporally,
+  stratifyMultiGranularity,
+} from "../pipeline/temporal.js";
+
+export type {
+  TemporalWindow,
+  TemporalPattern,
+  TemporalLayer,
+} from "../pipeline/temporal.js";
