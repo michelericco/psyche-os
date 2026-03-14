@@ -29,8 +29,11 @@ def search(query: str, top_k: int = 5, output_json: bool = False) -> list[dict]:
 
     try:
         collection = client.get_collection(name=COLLECTION_NAME)
-    except Exception:
-        print(f"ERROR: Collection '{COLLECTION_NAME}' not found.")
+    except ValueError:
+        print(f"ERROR: Collection '{COLLECTION_NAME}' not found. Run create-embeddings.py first.")
+        sys.exit(1)
+    except Exception as e:
+        print(f"ERROR: Failed to access collection: {e}")
         sys.exit(1)
 
     query_embedding = model.encode([query]).tolist()
@@ -85,11 +88,12 @@ def search(query: str, top_k: int = 5, output_json: bool = False) -> list[dict]:
 def main():
     parser = argparse.ArgumentParser(description="PSYCHE/OS Vector Search")
     parser.add_argument("query", help="Search query")
-    parser.add_argument("--top", type=int, default=5, help="Number of results (default: 5)")
+    parser.add_argument("--top", type=int, default=5, help="Number of results (default: 5, max: 50)")
     parser.add_argument("--json", action="store_true", help="Output as JSON")
     args = parser.parse_args()
 
-    search(args.query, top_k=args.top, output_json=args.json)
+    top_k = max(1, min(args.top, 50))
+    search(args.query, top_k=top_k, output_json=args.json)
 
 
 if __name__ == "__main__":

@@ -33,6 +33,12 @@ const TYPE_LABELS: Record<NodeType, string> = {
   archetype: 'Archetype', potential: 'Potential', primitive: 'Primitive',
 }
 const ALL_TYPES: NodeType[] = ['entity', 'theme', 'pattern', 'archetype', 'potential', 'primitive']
+const FILTER_PRESETS: Array<{ id: string; label: string; types: NodeType[] }> = [
+  { id: 'all', label: 'All', types: ALL_TYPES },
+  { id: 'core', label: 'Core map', types: ['entity', 'theme', 'pattern', 'archetype'] },
+  { id: 'signals', label: 'Signals', types: ['pattern', 'potential', 'primitive'] },
+  { id: 'structure', label: 'Structure', types: ['entity', 'theme', 'archetype'] },
+]
 
 const MIN_ZOOM = 0.3
 const MAX_ZOOM = 3
@@ -300,7 +306,11 @@ function VectorSearchPanel({
     setExpandedResult(null)
   }, [])
 
+  const MAX_QUERY_LENGTH = 500
+
   const handleCustomSearch = useCallback(() => {
+    if (searchInput.length > MAX_QUERY_LENGTH) return
+
     // Check if the input matches a demo query
     const match = searches.find(
       s => s.query.toLowerCase() === searchInput.toLowerCase()
@@ -352,7 +362,9 @@ function VectorSearchPanel({
     s => s.query.toLowerCase() === searchInput.toLowerCase()
   )
 
-  const liveSearchCmd = `.venv/bin/python3 scripts/search-embeddings.py '${searchInput || 'your query here'}'`
+  // Escape single quotes for shell safety: ' → '\''
+  const safeQuery = (searchInput || 'your query here').replace(/'/g, "'\\''")
+  const liveSearchCmd = `.venv/bin/python3 scripts/search-embeddings.py '${safeQuery}'`
 
   return (
     <div className="space-y-6">
@@ -503,6 +515,7 @@ export default function SemanticMapView() {
   const [hoveredId, setHoveredId] = useState<string | null>(null)
   const [visibleTypes, setVisibleTypes] = useState<Set<NodeType>>(new Set(ALL_TYPES))
   const [zoomLevel, setZoomLevel] = useState(1)
+  const [mapSearch, setMapSearch] = useState('')
   const [graphData] = useState<{ nodes: GraphNode[]; edges: GraphEdge[] }>(() => buildGraph())
 
   // Stable refs for values needed inside non-React event handlers
@@ -553,6 +566,28 @@ export default function SemanticMapView() {
     setZoomLevel(1)
     requestRedraw()
   }, [requestRedraw])
+
+  const centerOnNode = useCallback((node: GraphNode, scaleOverride?: number) => {
+    const canvas = canvasRef.current
+    if (!canvas || node.x == null || node.y == null) return
+
+    const rect = canvas.getBoundingClientRect()
+    const nextScale = Math.min(MAX_ZOOM, Math.max(MIN_ZOOM, scaleOverride ?? Math.max(transformRef.current.scale, 1.15)))
+    transformRef.current = {
+      scale: nextScale,
+      tx: rect.width / 2 - node.x * nextScale,
+      ty: rect.height / 2 - node.y * nextScale,
+    }
+    setZoomLevel(Math.round(nextScale * 100) / 100)
+    requestRedraw()
+  }, [requestRedraw])
+
+  const selectNode = useCallback((node: GraphNode | null, options?: { center?: boolean }) => {
+    setSelectedNode(node)
+    if (node && options?.center) {
+      centerOnNode(node)
+    }
+  }, [centerOnNode])
 
   // Initialize graph and simulation
   useEffect(() => {
@@ -729,11 +764,11 @@ export default function SemanticMapView() {
 
       if (dist < 5 && !wasDraggingNode && !wasPanning) {
         // This was a click
-        setSelectedNode(findNodeAt(graph.nodes, mouseX, mouseY, visibleTypes, transformRef.current))
+        selectNode(findNodeAt(graph.nodes, mouseX, mouseY, visibleTypes, transformRef.current))
       } else if (dist < 5 && wasDraggingNode) {
         // Clicked on a node without really dragging: select it
         const hit = findNodeAt(graph.nodes, mouseX, mouseY, visibleTypes, transformRef.current)
-        if (hit) setSelectedNode(hit)
+        if (hit) selectNode(hit)
       }
 
       const hit = findNodeAt(graph.nodes, mouseX, mouseY, visibleTypes, transformRef.current)
@@ -741,7 +776,7 @@ export default function SemanticMapView() {
     }
 
     mouseDownPosRef.current = null
-  }, [visibleTypes])
+  }, [selectNode, visibleTypes])
 
   const handleMouseLeave = useCallback(() => {
     setHoveredId(null)
@@ -762,7 +797,7 @@ export default function SemanticMapView() {
     // Try exact match first, then partial label match
     const exact = graph.nodes.find(n => n.id === nodeId)
     if (exact) {
-      setSelectedNode(exact)
+      selectNode(exact, { center: true })
       return
     }
     // Fuzzy: match on label substring
@@ -772,8 +807,65 @@ export default function SemanticMapView() {
         || label.toLowerCase().includes(n.label.toLowerCase())
     )
     if (fuzzy) {
-      setSelectedNode(fuzzy)
+      selectNode(fuzzy, { center: true })
     }
+  }, [selectNode])
+
+  const visibleNodeCount = useMemo(
+    () => graphData.nodes.filter(node => visibleTypes.has(node.type)).length,
+    [graphData.nodes, visibleTypes],
+  )
+
+  const quickJumpNodes = useMemo(
+    () => [...graphData.nodes]
+      .filter(node => visibleTypes.has(node.type))
+      .sort((left, right) => right.size - left.size)
+      .slice(0, 8),
+    [graphData.nodes, visibleTypes],
+  )
+
+  const mapSuggestions = useMemo(() => {
+    const query = mapSearch.trim().toLowerCase()
+    const candidates = graphData.nodes.filter(node => visibleTypes.has(node.type))
+
+    if (!query) return candidates.sort((left, right) => right.size - left.size).slice(0, 8)
+
+    return candidates
+      .filter(node => {
+        const haystack = `${node.label} ${TYPE_LABELS[node.type]}`.toLowerCase()
+        return haystack.includes(query)
+      })
+      .sort((left, right) => {
+        const leftStarts = left.label.toLowerCase().startsWith(query) ? 1 : 0
+        const rightStarts = right.label.toLowerCase().startsWith(query) ? 1 : 0
+        if (leftStarts !== rightStarts) return rightStarts - leftStarts
+        return right.size - left.size
+      })
+      .slice(0, 8)
+  }, [graphData.nodes, mapSearch, visibleTypes])
+
+  const currentPreset = useMemo(() => {
+    for (const preset of FILTER_PRESETS) {
+      if (preset.types.length !== visibleTypes.size) continue
+      if (preset.types.every(type => visibleTypes.has(type))) return preset.id
+    }
+    return null
+  }, [visibleTypes])
+
+  const applyPreset = useCallback((types: NodeType[]) => {
+    setVisibleTypes(new Set(types))
+  }, [])
+
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setSelectedNode(null)
+        setHoveredId(null)
+      }
+    }
+
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
   }, [])
 
   const connectedEdges = useMemo(() => selectedNode
@@ -785,8 +877,92 @@ export default function SemanticMapView() {
       <div className="mx-auto max-w-6xl">
         <SectionHead
           title="Semantic Map"
-          subtitle="Interactive concept graph. Click nodes to explore connections. Scroll to zoom, drag to pan. Filter by category."
+          subtitle="Interactive concept graph with quick jump, filters, and focus tools. Search a node, center it, then follow its connections."
         />
+
+        <div className="mb-4 rounded-xl border border-[color:var(--line-strong)] bg-[color:var(--panel-soft)] p-4 sm:p-5">
+          <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+            <div className="flex-1 space-y-3">
+              <div>
+                <div className="text-[10px] uppercase tracking-[0.22em] text-[color:var(--ink-faint)]">Quick navigation</div>
+                <p className="mt-2 text-sm text-[color:var(--ink-soft)]">
+                  Search a node by name, jump to a frequent concept, or reduce visual noise with a preset.
+                </p>
+              </div>
+
+              <div className="flex flex-col gap-2 sm:flex-row">
+                <input
+                  type="search"
+                  value={mapSearch}
+                  onChange={(event) => setMapSearch(event.target.value)}
+                  placeholder="Find a node or concept"
+                  className="flex-1 rounded-lg border border-[color:var(--line-strong)] bg-[color:var(--paper-strong)] px-4 py-2.5 text-sm text-[color:var(--ink)] placeholder:text-[color:var(--ink-faint)] focus:outline-none focus:border-[color:var(--accent)]/55 focus:ring-1 focus:ring-[color:var(--accent)]/12 transition-colors"
+                />
+                <button
+                  type="button"
+                  onClick={() => {
+                    const first = mapSuggestions[0]
+                    if (first) selectNode(first, { center: true })
+                  }}
+                  disabled={mapSuggestions.length === 0}
+                  className="rounded-lg border border-[color:var(--accent)]/35 bg-[color:var(--accent)]/10 px-4 py-2.5 text-sm text-[color:var(--accent)] transition-colors hover:bg-[color:var(--accent)]/16 hover:border-[color:var(--accent)]/55 disabled:cursor-not-allowed disabled:opacity-50"
+                >
+                  Jump
+                </button>
+              </div>
+
+              <div className="flex flex-wrap gap-2">
+                {mapSuggestions.map((node) => (
+                  <button
+                    key={node.id}
+                    type="button"
+                    onClick={() => selectNode(node, { center: true })}
+                    className="rounded-full border px-3 py-1.5 text-xs font-medium transition-colors hover:bg-[color:var(--paper-strong)]"
+                    style={{
+                      color: node.color,
+                      backgroundColor: `${node.color}12`,
+                      borderColor: `${node.color}32`,
+                    }}
+                  >
+                    {node.label}
+                  </button>
+                ))}
+                {mapSuggestions.length === 0 && (
+                  <span className="text-xs text-[color:var(--ink-faint)]">No visible nodes match this search.</span>
+                )}
+              </div>
+            </div>
+
+            <div className="min-w-0 lg:w-[18rem] space-y-3">
+              <div className="text-[10px] uppercase tracking-[0.22em] text-[color:var(--ink-faint)]">Presets</div>
+              <div className="flex flex-wrap gap-2">
+                {FILTER_PRESETS.map((preset) => {
+                  const active = currentPreset === preset.id
+                  return (
+                    <button
+                      key={preset.id}
+                      type="button"
+                      onClick={() => applyPreset(preset.types)}
+                      className="rounded-full border px-3 py-1.5 text-xs font-medium transition-colors"
+                      style={{
+                        color: active ? 'var(--accent)' : '#66594c',
+                        backgroundColor: active ? 'rgba(66,133,244,0.12)' : 'rgba(252,247,239,0.42)',
+                        borderColor: active ? 'rgba(66,133,244,0.35)' : 'rgba(63,49,34,0.16)',
+                      }}
+                    >
+                      {preset.label}
+                    </button>
+                  )
+                })}
+              </div>
+              <div className="rounded-lg border border-[color:var(--line)] bg-[color:var(--paper-strong)] px-3 py-2.5 text-xs text-[color:var(--ink-soft)]">
+                Visible nodes: <span className="font-mono text-[color:var(--ink)]">{visibleNodeCount}</span>
+                <br />
+                Selected: <span className="font-medium text-[color:var(--ink)]">{selectedNode?.label ?? 'None'}</span>
+              </div>
+            </div>
+          </div>
+        </div>
 
         <div className="flex flex-wrap gap-3 mb-4">
           {ALL_TYPES.map(type => {
@@ -818,6 +994,14 @@ export default function SemanticMapView() {
               <span className="text-[10px] font-mono text-[color:var(--ink-faint)] bg-[color:var(--panel)] px-2 py-1 rounded border border-[color:var(--line-strong)]">
                 {Math.round(zoomLevel * 100)}%
               </span>
+              {selectedNode && (
+                <button
+                  onClick={() => centerOnNode(selectedNode)}
+                  className="cursor-pointer rounded border border-[color:var(--line-strong)] bg-[color:var(--panel)] px-2 py-1 text-[10px] font-medium text-[color:var(--ink-soft)] transition-colors hover:border-[color:var(--accent)]/35 hover:text-[color:var(--accent)]"
+                >
+                  Focus selection
+                </button>
+              )}
               {zoomLevel !== 1 && (
                 <button
                   onClick={resetView}
@@ -830,44 +1014,92 @@ export default function SemanticMapView() {
 
             {/* Navigation hints */}
             <div className="absolute top-3 right-3 text-[9px] text-[color:var(--ink-faint)] bg-[color:var(--panel)] px-2 py-1 rounded">
-              Scroll: zoom | Drag: pan | Drag node: move
+              Scroll: zoom | Drag background: pan | Drag node: move | Esc: clear
             </div>
           </div>
 
           <div className="rounded-lg border border-[color:var(--line-strong)] bg-[color:var(--panel-soft)] p-4 h-fit">
             {selectedNode ? (
               <div className="space-y-4">
-                <div className="flex items-center gap-2">
-                  <span className="w-3 h-3 rounded-full" style={{ backgroundColor: selectedNode.color }} />
-                  <span className="text-[10px] font-medium px-2 py-0.5 rounded"
-                    style={{ color: selectedNode.color, backgroundColor: `${selectedNode.color}15` }}>
-                    {TYPE_LABELS[selectedNode.type]}
-                  </span>
+                <div className="flex items-start justify-between gap-3">
+                  <div className="flex items-center gap-2">
+                    <span className="w-3 h-3 rounded-full" style={{ backgroundColor: selectedNode.color }} />
+                    <span className="text-[10px] font-medium px-2 py-0.5 rounded"
+                      style={{ color: selectedNode.color, backgroundColor: `${selectedNode.color}15` }}>
+                      {TYPE_LABELS[selectedNode.type]}
+                    </span>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => selectNode(null)}
+                    className="rounded border border-[color:var(--line)] px-2 py-1 text-[10px] font-medium text-[color:var(--ink-faint)] transition-colors hover:border-[color:var(--accent)]/35 hover:text-[color:var(--accent)]"
+                  >
+                    Clear
+                  </button>
                 </div>
                 <h3 className="text-sm font-medium text-[color:var(--ink)]">{selectedNode.label}</h3>
                 <p className="text-xs text-[color:var(--ink-soft)] leading-relaxed">{selectedNode.detail}</p>
+                <div className="flex flex-wrap gap-2">
+                  <button
+                    type="button"
+                    onClick={() => centerOnNode(selectedNode)}
+                    className="rounded-md border border-[color:var(--accent)]/30 bg-[color:var(--accent)]/10 px-3 py-1.5 text-xs font-medium text-[color:var(--accent)] transition-colors hover:bg-[color:var(--accent)]/16"
+                  >
+                    Center on map
+                  </button>
+                  <span className="rounded-md border border-[color:var(--line)] bg-[color:var(--paper-strong)] px-3 py-1.5 text-xs text-[color:var(--ink-soft)]">
+                    {connectedEdges.length} linked node{connectedEdges.length === 1 ? '' : 's'}
+                  </span>
+                </div>
                 <div>
                   <h4 className="text-[10px] uppercase tracking-wider text-[color:var(--ink-faint)] mb-2">Connections</h4>
-                  <div className="space-y-1">
+                  <div className="space-y-1 max-h-72 overflow-auto pr-1">
                     {connectedEdges.map((e, i) => {
                       const otherId = edgeId(e, 'source') === selectedNode.id ? edgeId(e, 'target') : edgeId(e, 'source')
                       const other = graphData?.nodes.find(n => n.id === otherId)
                       if (!other) return null
                       return (
-                        <button key={i} onClick={() => setSelectedNode(other)}
-                          className="flex items-center gap-2 w-full text-left px-2 py-1 rounded hover:bg-[color:var(--panel-soft)] transition-colors cursor-pointer">
+                        <button key={i} onClick={() => selectNode(other, { center: true })}
+                          className="flex items-center justify-between gap-2 w-full text-left px-2 py-1.5 rounded hover:bg-[color:var(--panel-soft)] transition-colors cursor-pointer">
+                          <span className="flex min-w-0 items-center gap-2">
                           <span className="w-2 h-2 rounded-full shrink-0" style={{ backgroundColor: other.color }} />
                           <span className="text-xs text-[color:var(--ink-soft)] truncate">{other.label}</span>
+                          </span>
+                          <span className="text-[10px] uppercase tracking-[0.16em] text-[color:var(--ink-faint)]">{TYPE_LABELS[other.type]}</span>
                         </button>
                       )
                     })}
+                    {connectedEdges.length === 0 && (
+                      <p className="text-xs text-[color:var(--ink-faint)]">This node has no visible connections with the current filters.</p>
+                    )}
                   </div>
                 </div>
               </div>
             ) : (
-              <p className="text-xs text-[color:var(--ink-faint)] leading-relaxed">
-                Click a node on the graph to view its details and connections.
-              </p>
+              <div className="space-y-4">
+                <p className="text-xs text-[color:var(--ink-faint)] leading-relaxed">
+                  Start from a quick jump below or click a node on the graph to inspect details and connected concepts.
+                </p>
+                <div>
+                  <h4 className="text-[10px] uppercase tracking-wider text-[color:var(--ink-faint)] mb-2">Popular entry points</h4>
+                  <div className="space-y-1">
+                    {quickJumpNodes.map((node) => (
+                      <button
+                        key={node.id}
+                        type="button"
+                        onClick={() => selectNode(node, { center: true })}
+                        className="flex items-center justify-between gap-2 w-full rounded px-2 py-1.5 text-left transition-colors hover:bg-[color:var(--paper-strong)]"
+                      >
+                        <span className="flex min-w-0 items-center gap-2">
+                          <span className="w-2 h-2 rounded-full shrink-0" style={{ backgroundColor: node.color }} />
+                          <span className="truncate text-xs text-[color:var(--ink-soft)]">{node.label}</span>
+                        </span>
+                        <span className="text-[10px] uppercase tracking-[0.16em] text-[color:var(--ink-faint)]">{TYPE_LABELS[node.type]}</span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </div>
             )}
           </div>
         </div>

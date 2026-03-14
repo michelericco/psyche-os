@@ -1,8 +1,10 @@
 import { crossValidatedPatterns, DIMENSION_COLORS } from '../data/loader'
 import type { CrossValidatedPattern } from '../data/types'
+import { getPatternDelta } from '../data/timelineStore'
 import {
   SectionHead,
   Expandable,
+  DriftBadge,
   ConfidenceBar,
   Cite,
   References,
@@ -124,6 +126,7 @@ function PatternTitle({ pattern }: { pattern: CrossValidatedPattern }) {
           {pattern.label}
         </span>
         <DimensionBadge dimension={pattern.dimension} />
+        <DriftBadge delta={getPatternDelta(pattern.id)} />
       </div>
       <div className="max-w-xs">
         <ConfidenceBar value={pattern.confidence} />

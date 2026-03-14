@@ -12,8 +12,8 @@ PROMPT_FILE="$PROMPT_DIR/extraction.txt"
 
 if [ ! -f "$SOURCE" ]; then
   echo "ERROR: Source file not found: $SOURCE"
-  echo "Usage: $0 [path-to-codex-history.md]"
-  echo "Or set: PSYCHE_CODEX_HISTORY=/path/to/file.md"
+  echo "Usage: $0 [path-to-codex-history.md|path-to-history.jsonl]"
+  echo "Or set: PSYCHE_CODEX_HISTORY=/path/to/file"
   exit 1
 fi
 
@@ -27,6 +27,7 @@ echo "CLI: $PSYCHE_CLI"
 echo "Source: $SOURCE"
 
 TMP=$(mktemp)
+trap 'rm -f "$TMP"' EXIT INT TERM
 cat "$PROMPT_FILE" > "$TMP"
 echo -e "\n\n--- SOURCE DATA (Codex CLI Sessions) ---\n" >> "$TMP"
 head -c 200000 "$SOURCE" >> "$TMP"
@@ -34,6 +35,7 @@ head -c 200000 "$SOURCE" >> "$TMP"
 SIZE=$(/usr/bin/wc -c < "$TMP" | tr -d ' ')
 echo "Input size: ${SIZE} bytes"
 
+psyche_redact_secrets "$TMP"
 psyche_llm_run "$TMP" "$OUTPUT_DIR/extraction-codex-sessions.json"
 psyche_strip_fences "$OUTPUT_DIR/extraction-codex-sessions.json"
 rm -f "$TMP"

@@ -150,8 +150,10 @@ const SOURCE_DIRS = [
 /**
  * Recursively walk a directory, resolving symlinks so that
  * symlinked subdirectories are traversed correctly.
+ * Only follows symlinks whose resolved target falls within allowedBase,
+ * to prevent traversal outside the intended sources directory.
  */
-async function walkDir(dirPath: string): Promise<string[]> {
+async function walkDir(dirPath: string, allowedBase: string): Promise<string[]> {
   const results: string[] = [];
 
   let resolvedPath: string;
@@ -176,17 +178,21 @@ async function walkDir(dirPath: string): Promise<string[]> {
     if (entry.isFile()) {
       results.push(fullPath);
     } else if (entry.isDirectory()) {
-      const nested = await walkDir(fullPath);
+      const nested = await walkDir(fullPath, allowedBase);
       results.push(...nested);
     } else if (entry.isSymbolicLink()) {
-      // Resolve symlink and check what it points to
+      // Resolve symlink and reject targets outside the allowed base
       try {
         const realTarget = await fs.realpath(fullPath);
+        if (realTarget !== allowedBase && !realTarget.startsWith(allowedBase + path.sep)) {
+          console.warn(`[ingest] Symlink rejected (outside base): ${fullPath} → ${realTarget}`);
+          continue;
+        }
         const stat = await fs.stat(realTarget);
         if (stat.isFile()) {
           results.push(realTarget);
         } else if (stat.isDirectory()) {
-          const nested = await walkDir(realTarget);
+          const nested = await walkDir(realTarget, allowedBase);
           results.push(...nested);
         }
       } catch {
@@ -201,16 +207,24 @@ async function walkDir(dirPath: string): Promise<string[]> {
 /**
  * Discover all ingestible files within a base sources directory.
  * Scans known subdirectories for supported file types.
- * Follows symlinks so that linked source directories are traversed.
+ * Follows symlinks only when their resolved target stays within basePath.
  * @param basePath - Root path to the sources directory
  * @returns Array of absolute file paths
  */
 export async function discoverSources(basePath: string): Promise<string[]> {
   const discovered: string[] = [];
 
+  // Resolve once so symlink boundary checks use canonical paths.
+  let resolvedBase: string;
+  try {
+    resolvedBase = await fs.realpath(basePath);
+  } catch {
+    return discovered;
+  }
+
   for (const dir of SOURCE_DIRS) {
-    const dirPath = path.join(basePath, dir);
-    const files = await walkDir(dirPath);
+    const dirPath = path.join(resolvedBase, dir);
+    const files = await walkDir(dirPath, resolvedBase);
     discovered.push(...files);
   }
 

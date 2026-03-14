@@ -591,14 +591,14 @@ def main():
 
     client = chromadb.PersistentClient(path=str(VECTOR_DB_DIR))
 
-    # Delete existing collection if present
+    # Delete existing collection if present (catch broadly: API varies across versions)
     try:
         client.delete_collection(COLLECTION_NAME)
         print(f"  Deleted existing collection '{COLLECTION_NAME}'")
     except Exception:
-        pass
+        pass  # Collection does not exist yet — expected on first run
 
-    collection = client.create_collection(
+    collection = client.get_or_create_collection(
         name=COLLECTION_NAME,
         metadata={"hnsw:space": "cosine"},
     )

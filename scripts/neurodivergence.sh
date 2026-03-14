@@ -24,6 +24,7 @@ echo "=== Neurodivergence Screening ==="
 echo "CLI: $PSYCHE_CLI"
 
 TMP=$(mktemp)
+trap 'rm -f "$TMP"' EXIT INT TERM
 cat "$PROMPT_FILE" > "$TMP"
 
 echo -e "\n\n--- EXTRACTION: claude-sessions ---\n" >> "$TMP"

@@ -64,10 +64,10 @@ ${potentialLines}
 
 === Narrative Arc ===
 Current Chapter: ${narrativeArc.currentChapter}
-Description: ${narrativeArc.description}
-Tension Point: ${narrativeArc.tensionPoint}
-Previous Chapters: ${narrativeArc.previousChapters.join(' > ')}
-Possible Resolutions: ${narrativeArc.possibleResolutions.join('; ')}
+Description: ${narrativeArc.description ?? ''}
+Tension Point: ${(narrativeArc.tensionPoint as string | undefined) ?? (narrativeArc as unknown as Record<string,string>)['tension'] ?? ''}
+Previous Chapters: ${(narrativeArc.previousChapters ?? []).join(' > ')}
+Possible Resolutions: ${(narrativeArc.possibleResolutions ?? []).join('; ')}
 
 === Guidelines ===
 - Reference specific patterns and their confidence levels when relevant.

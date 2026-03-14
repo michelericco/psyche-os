@@ -1,295 +1,198 @@
-import {
-  RadarChart,
-  Radar,
-  PolarGrid,
-  PolarAngleAxis,
-  PolarRadiusAxis,
-  ResponsiveContainer,
-  Tooltip,
-} from 'recharts'
+import { useEffect, useState } from 'react'
 import { dimensionalScores, DIMENSION_COLORS } from '../data/loader'
+import { getDimensionDelta } from '../data/timelineStore'
+import { useI18n } from '../i18n'
 import {
   SectionHead,
-  TwoCol,
   Expandable,
-  Cite,
-  References,
-  ExploreButton,
+  DriftBadge,
 } from '../components/shared'
 
-const DIMENSION_REFS: Record<
-  string,
-  { author: string; work: string; year?: string; detail?: string }[]
-> = {
-  Psychological: [
-    {
-      author: 'Costa & McCrae',
-      work: 'Revised NEO Personality Inventory (NEO PI-R)',
-      year: '1992',
-      detail: 'Five-factor model of personality traits',
-    },
-    {
-      author: 'APA',
-      work: 'DSM-5 Alternative Model for Personality Disorders',
-      year: '2013',
-      detail: 'Dimensional personality trait assessment',
-    },
-  ],
-  Spiritual: [
-    {
-      author: 'William James',
-      work: 'The Varieties of Religious Experience',
-      year: '1902',
-      detail: 'Foundational taxonomy of spiritual states',
-    },
-    {
-      author: 'Abraham Maslow',
-      work: 'Toward a Psychology of Being',
-      year: '1962',
-      detail: 'Self-actualization and peak experiences',
-    },
-  ],
-  Anthropological: [
-    {
-      author: 'Clifford Geertz',
-      work: 'The Interpretation of Cultures',
-      year: '1973',
-      detail: 'Thick description of cultural meaning systems',
-    },
-  ],
-  Social: [
-    {
-      author: 'Robin Dunbar',
-      work: 'The Social Brain Hypothesis',
-      year: '1998',
-      detail: 'Cognitive limits on social network size',
-    },
-    {
-      author: 'Mark Granovetter',
-      work: 'The Strength of Weak Ties',
-      year: '1973',
-      detail: 'Role of bridging connections in information flow',
-    },
-  ],
-  Creative: [
-    {
-      author: 'Mihaly Csikszentmihalyi',
-      work: 'Creativity: Flow and the Psychology of Discovery and Invention',
-      year: '1996',
-      detail: 'Systems model of creativity',
-    },
-    {
-      author: 'Teresa Amabile',
-      work: 'Componential Theory of Creativity',
-      year: '1983',
-      detail: 'Domain skills, creative processes, and intrinsic motivation',
-    },
-  ],
-  Professional: [
-    {
-      author: 'John L. Holland',
-      work: 'Making Vocational Choices',
-      year: '1997',
-      detail: 'RIASEC model of vocational personality types',
-    },
-    {
-      author: 'Edgar H. Schein',
-      work: 'Career Anchors: Discovering Your Real Values',
-      year: '1990',
-      detail: 'Self-concept patterns guiding career decisions',
-    },
-  ],
+// ── Helpers ─────────────────────────────────────────────────────────
+
+const STATUS_COLOR: Record<string, string> = {
+  Stabile:      '#4a8a50',
+  Emergente:    '#7a6a2a',
+  'In tensione': '#9a3a28',
 }
 
-const DIMENSION_DESCRIPTIONS: Record<string, string> = {
-  Psychological:
-    'Personality traits, cognitive style, emotional regulation patterns, and defense mechanisms as identified across sources.',
-  Spiritual:
-    'Relationship with meaning, transcendence, and existential questions. Includes both traditional spirituality and secular meaning-making.',
-  Anthropological:
-    'Cultural positioning, value systems, rituals, and the symbolic frameworks used to interpret experience.',
-  Social:
-    'Network structure, relational patterns, communication style, and the quality of interpersonal bonds.',
-  Creative:
-    'Creative process, aesthetic sensibility, capacity for divergent thinking, and relationship with artistic expression.',
-  Professional:
-    'Career identity, vocational alignment, leadership style, and relationship with work and professional growth.',
-}
+const dimensions = Object.entries(dimensionalScores).map(([name, dim]) => {
+  const score      = dim.score ?? dim.depth ?? 0
+  const status     = dim.status ?? (score >= 0.7 ? 'Stabile' : score >= 0.4 ? 'Emergente' : 'In tensione')
+  const color      = DIMENSION_COLORS[name] ?? '#9f4a34'
+  const statusColor = STATUS_COLOR[status] ?? '#888'
+  return { name, score, status, color, statusColor, ...dim }
+})
 
-const radarData = Object.entries(dimensionalScores).map(([name, dim]) => ({
-  dimension: name,
-  score: (dim.score ?? 0) * 100,
-  fullMark: 100,
-}))
-
-const dimensions = Object.entries(dimensionalScores).map(([name, dim]) => ({
-  name,
-  score: dim.score ?? 0,
-  convergence: dim.convergence ?? '',
-  blindSpot: dim.blindSpot ?? '',
-  color: DIMENSION_COLORS[name] ?? '#6366f1',
-}))
+// ── Component ────────────────────────────────────────────────────────
 
 export default function DimensionsView() {
+  const { t } = useI18n()
+  const [selected, setSelected] = useState<string | null>(null)
+  const [rotation, setRotation] = useState(0)
+  // Animazione orbitale
+  useEffect(() => {
+    const interval = setInterval(() => setRotation(r => (r + 0.5) % 360), 40)
+    return () => clearInterval(interval)
+  }, [])
+
+  const centerX = 220
+  const centerY = 220
+  const radius = 140
+  const getPos = (i: number, total: number) => {
+    const angle = (i * 360 / total + rotation) * (Math.PI / 180)
+    return {
+      x: centerX + Math.cos(angle) * radius,
+      y: centerY + Math.sin(angle) * radius,
+    }
+  }
+
+  const sel = selected ? dimensions.find(d => d.name === selected) : null
+
+  // Fallback se non ci sono dimensioni
+  if (!dimensions || dimensions.length === 0) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[40vh]">
+        <SectionHead title={t('dimensions.title')} explanation={t('dimensions.explanation')} />
+        <div className="text-lg text-[color:var(--ink-faint)] mt-10">{t('dimensions.none')}</div>
+      </div>
+    )
+  }
+
   return (
     <div className="space-y-10">
       <SectionHead
-        title="Dimensional Profile"
-        explanation="PSYCHE/OS analyzes identity across 6 dimensions derived from established psychological, sociological, and anthropological frameworks. Scores reflect the depth and consistency of evidence across sources, not absolute measurement."
+        title={t('dimensions.title')}
+        explanation={t('dimensions.explanation')}
       />
-
-      <TwoCol
-        left={
-          <div className="mx-auto max-w-lg">
-            <ResponsiveContainer width="100%" height={380}>
-              <RadarChart data={radarData} cx="50%" cy="50%" outerRadius="75%">
-                <PolarGrid stroke="#cdbdad" />
-                <PolarAngleAxis
-                  dataKey="dimension"
-                  tick={{ fill: '#7f7264', fontSize: 11 }}
+      <div className="flex flex-col items-center">
+        <svg width={440} height={440} style={{ margin: '0 auto', display: 'block' }}>
+          <defs>
+            <radialGradient id="psyche-center" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stopColor="#f3e8ff" stopOpacity="1" />
+              <stop offset="100%" stopColor="#a78bfa" stopOpacity="0.7" />
+            </radialGradient>
+          </defs>
+          <circle cx={centerX} cy={centerY} r={54} fill="url(#psyche-center)" stroke="#a78bfa" strokeWidth={3} />
+          <text x={centerX} y={centerY+6} textAnchor="middle" fontSize="1.5rem" fontWeight="bold" fill="#7c3aed">PSYCHE</text>
+          <circle cx={centerX} cy={centerY} r={radius} fill="none" stroke="#ede9fe" strokeDasharray="4 6" />
+          {dimensions.map((dim, i) => {
+            const { x, y } = getPos(i, dimensions.length)
+            const isSelected = selected === dim.name
+            return (
+              <g key={dim.name} style={{ cursor: 'pointer' }}
+                onClick={() => setSelected(dim.name)}
+              >
+                <circle
+                  cx={x}
+                  cy={y}
+                  r={isSelected ? 38 : 26}
+                  fill={dim.color}
+                  fillOpacity={isSelected ? 0.22 : 0.13}
+                  stroke={dim.statusColor}
+                  strokeWidth={isSelected ? 5 : 2}
+                  style={{ filter: isSelected ? 'drop-shadow(0 0 8px #a78bfa88)' : 'none', transition: 'all 0.18s cubic-bezier(.4,2,.6,1)' }}
                 />
-                <PolarRadiusAxis
-                  angle={90}
-                  domain={[0, 100]}
-                  tick={{ fill: '#96897c', fontSize: 10 }}
-                  axisLine={false}
+                <circle
+                  cx={x+30}
+                  cy={y-30}
+                  r={10}
+                  fill={dim.statusColor}
+                  stroke="#fff"
+                  strokeWidth={2}
                 />
-                <Tooltip
-                  contentStyle={{
-                    backgroundColor: '#fbf7f1',
-                    border: '1px solid #d3c4b6',
-                    borderRadius: '6px',
-                    color: '#4d4339',
-                    fontSize: '12px',
-                  }}
-                  formatter={(value) => [
-                    `${Number(value ?? 0).toFixed(0)}%`,
-                    'Score',
-                  ]}
-                />
-                <Radar
-                  name="Score"
-                  dataKey="score"
-                  stroke="#9f4a34"
-                  fill="#9f4a34"
-                  fillOpacity={0.08}
-                  strokeWidth={1.5}
-                />
-              </RadarChart>
-            </ResponsiveContainer>
-          </div>
-        }
-        right={
-          <div className="space-y-5">
-            <p className="text-sm leading-relaxed text-[color:var(--ink-soft)]">
-              The radar chart visualizes relative scores across all six
-              dimensions. A balanced profile appears as a regular hexagon;
-              asymmetries reveal where evidence is strongest and where gaps
-              exist. Each score is derived from cross-source convergence,
-              higher values indicate consistent evidence from multiple data
-              sources, not a value judgment.
-            </p>
-            <ul className="space-y-2.5">
-              {dimensions.map((dim) => (
-                <li key={dim.name} className="flex items-start gap-2.5">
-                  <span
-                    className="mt-1.5 block h-2 w-2 shrink-0 rounded-full"
-                    style={{ backgroundColor: dim.color }}
-                  />
-                  <div>
-                    <span className="text-xs font-medium text-[color:var(--ink)]">
-                      {dim.name}
-                    </span>
-                    <p className="text-xs leading-relaxed text-[color:var(--ink-faint)]">
-                      {DIMENSION_DESCRIPTIONS[dim.name] ?? ''}
-                    </p>
-                  </div>
-                </li>
-              ))}
-            </ul>
-          </div>
-        }
-      />
-
-      <div className="space-y-0">
-        {dimensions.map((dim) => {
-          const refs = DIMENSION_REFS[dim.name] ?? []
-
-          return (
-            <Expandable
-              key={dim.name}
-              explore={
-                <ExploreButton
-                  finding={dim.name}
-                  context={`${dim.convergence}${dim.blindSpot ? ` Blind spot: ${dim.blindSpot}` : ''}`}
-                  sources="claude-sessions, codex-sessions, social-traces"
-                />
-              }
-              renderTitle={
-                <div className="flex items-center gap-3">
-                  <span className="text-sm font-medium text-[color:var(--ink)]">{dim.name}</span>
-                </div>
-              }
-              summary={`Score: ${Math.round(dim.score * 100)}%`}
-            >
-              <div className="space-y-4">
-                {/* Colored dot + score bar */}
-                <div className="flex items-center gap-3">
-                  <span
-                    className="block h-2 w-2 shrink-0 rounded-full"
-                    style={{ backgroundColor: dim.color }}
-                  />
-                  <div className="h-1 flex-1 overflow-hidden rounded-full bg-[color:var(--panel)]">
-                    <div
-                      className="h-full rounded-full"
-                      style={{
-                        width: `${dim.score * 100}%`,
-                        backgroundColor: dim.color,
-                      }}
-                    />
-                  </div>
-                  <span className="shrink-0 text-xs tabular-nums text-[color:var(--ink-soft)]">
-                    {Math.round(dim.score * 100)}%
-                  </span>
-                </div>
-
-                {/* Convergence */}
-                {dim.convergence && (
-                  <p className="text-sm leading-relaxed text-[color:var(--ink-soft)]">
-                    {dim.convergence}
-                  </p>
-                )}
-
-                {/* Blind Spot */}
-                {dim.blindSpot && (
-                  <div className="border-l-2 border-amber-500/40 pl-4">
-                    <span className="text-xs font-medium uppercase tracking-wider text-amber-500/70">
-                      Blind Spot
-                    </span>
-                    <p className="mt-1 text-sm leading-relaxed text-[color:var(--ink-soft)]">
-                      {dim.blindSpot}
-                    </p>
-                  </div>
-                )}
-
-                {/* References */}
-                {refs.length > 0 && (
-                  <References>
-                    {refs.map((ref) => (
-                      <Cite
-                        key={`${ref.author}-${ref.year}`}
-                        author={ref.author}
-                        work={ref.work}
-                        year={ref.year}
-                        detail={ref.detail}
-                      />
-                    ))}
-                  </References>
-                )}
+                <text x={x+30} y={y-26} textAnchor="middle" fontSize="0.8rem" fontWeight="bold" fill="#fff">{dim.status[0]}</text>
+                <text x={x} y={y+6} textAnchor="middle" fontSize={isSelected ? '1.5rem' : '1.1rem'} fontWeight="bold" fill="#312e81">{dim.name.slice(0,2).toUpperCase()}</text>
+              </g>
+            )
+          })}
+        </svg>
+        {/* Dettaglio sotto la mappa */}
+        {sel && (
+          <div className="space-y-3 pt-6 w-full max-w-xl animate-fadein">
+            <div className="flex items-center gap-2 flex-wrap">
+              <span className="font-semibold text-lg" style={{ color: sel.color }}>{sel.name}</span>
+              <span className="px-2 py-0.5 rounded text-xs font-medium text-white" style={{ backgroundColor: sel.statusColor }}>{sel.status}</span>
+              <DriftBadge delta={getDimensionDelta(sel.name)?.scoreDelta} />
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="block h-1.5 w-32 rounded-full bg-[color:var(--panel)] overflow-hidden">
+                <span className="block h-full rounded-full" style={{ width: `${sel.score * 100}%`, backgroundColor: sel.color }} />
+              </span>
+              <span className="text-xs tabular-nums">{Math.round(sel.score * 100)}%</span>
+            </div>
+            {sel.convergence && (
+              <p className="text-xs text-[color:var(--ink-soft)] leading-relaxed">{sel.convergence}</p>
+            )}
+            {sel.blindSpot && (
+              <div className="border-l-2 border-amber-500/40 pl-3">
+                <span className="text-xs font-medium uppercase tracking-wider text-amber-500/70">{t('dimensions.blindSpot')}</span>
+                <span className="block text-xs text-[color:var(--ink-soft)]">{sel.blindSpot}</span>
               </div>
-            </Expandable>
-          )
-        })}
+            )}
+          </div>
+        )}
+      </div>
+
+      {/* Dimension list */}
+      <div className="space-y-0 mt-6">
+        {dimensions.map((dim) => (
+          <Expandable
+            key={dim.name}
+            renderTitle={
+              <div
+                className="flex items-center gap-3 cursor-pointer"
+                onClick={() => setSelected(selected === dim.name ? null : dim.name)}
+              >
+                <span className="text-sm font-medium text-[color:var(--ink)]">{dim.name}</span>
+                <span
+                  className="inline-block px-2 py-0.5 rounded text-xs font-medium text-white"
+                  style={{ backgroundColor: dim.statusColor }}
+                >
+                  {dim.status}
+                </span>
+                <DriftBadge delta={getDimensionDelta(dim.name)?.scoreDelta} />
+              </div>
+            }
+            summary={`${t('dimensions.score')}: ${Math.round(dim.score * 100)}%`}
+          >
+            <div className="space-y-4">
+              <div className="flex items-center gap-3">
+                <span className="block h-2 w-2 shrink-0 rounded-full" style={{ backgroundColor: dim.color }} />
+                <div className="h-1 flex-1 overflow-hidden rounded-full bg-[color:var(--panel)]">
+                  <div
+                    className="h-full rounded-full"
+                    style={{ width: `${dim.score * 100}%`, backgroundColor: dim.color }}
+                  />
+                </div>
+                <span className="shrink-0 text-xs tabular-nums text-[color:var(--ink-soft)]">
+                  {Math.round(dim.score * 100)}%
+                </span>
+              </div>
+              {dim.convergence && (
+                <p className="text-sm leading-relaxed text-[color:var(--ink-soft)]">{dim.convergence}</p>
+              )}
+              {dim.blindSpot && (
+                <div className="border-l-2 border-amber-500/40 pl-4">
+                  <span className="text-xs font-medium uppercase tracking-wider text-amber-500/70">
+                    {t('dimensions.blindSpot')}
+                  </span>
+                  <p className="mt-1 text-sm leading-relaxed text-[color:var(--ink-soft)]">{dim.blindSpot}</p>
+                </div>
+              )}
+              {dim.keyFindings && dim.keyFindings.length > 0 && (
+                <ul className="space-y-1">
+                  {dim.keyFindings.map((f, i) => (
+                    <li key={i} className="flex items-start gap-2 text-sm text-[color:var(--ink-soft)]">
+                      <span className="text-[color:var(--accent)] mt-0.5 shrink-0">·</span>
+                      {f}
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+          </Expandable>
+        ))}
       </div>
     </div>
   )

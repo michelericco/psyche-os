@@ -199,6 +199,8 @@ bash scripts/run-full-pipeline.sh
 
 Or run the stages individually:
 
+These script names are the same commands shown in the web onboarding Setup view.
+
 ```bash
 bash scripts/extract-claude-sessions.sh
 bash scripts/extract-codex-sessions.sh
@@ -219,6 +221,43 @@ Validation:
 
 ```bash
 npm run validate
+```
+
+Guardrails check:
+
+```bash
+npm run guardrails:check
+```
+
+Optional local pre-commit hook (not enforced for the team):
+
+```bash
+npm run hooks:install
+```
+
+Hook management:
+
+```bash
+npm run hooks:status
+npm run hooks:uninstall
+```
+
+Temporary bypass for one commit:
+
+```bash
+SKIP_GUARDRAILS=1 git commit -m "..."
+```
+
+Safe auto-push (explicit opt-in, protected branch blocked by default):
+
+```bash
+AUTO_PUSH_ENABLED=1 AUTO_PUSH_BRANCH=feature/my-branch bash auto-push.sh
+```
+
+To allow auto-push on `main`/`master`, explicitly set:
+
+```bash
+AUTO_PUSH_ALLOW_PROTECTED=1
 ```
 
 ---

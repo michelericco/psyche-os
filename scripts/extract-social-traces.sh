@@ -17,7 +17,9 @@ echo "=== Extract: Social Traces ==="
 echo "CLI: $PSYCHE_CLI"
 
 # Combine social media sources
+TMP=""  # initialized for trap coverage before SOCIAL_TEMP creation
 SOCIAL_TEMP=$(mktemp)
+trap 'rm -f "$SOCIAL_TEMP"; [ -n "${TMP:-}" ] && rm -f "$TMP"' EXIT INT TERM
 
 if [ -f "$SOURCES_DIR/twitter/bookmarks-stats.md" ]; then
   cat "$SOURCES_DIR/twitter/bookmarks-stats.md" > "$SOCIAL_TEMP"
@@ -47,6 +49,7 @@ rm -f "$SOCIAL_TEMP"
 SIZE=$(/usr/bin/wc -c < "$TMP" | tr -d ' ')
 echo "Input size: ${SIZE} bytes"
 
+psyche_redact_secrets "$TMP"
 psyche_llm_run "$TMP" "$OUTPUT_DIR/extraction-social-traces.json"
 psyche_strip_fences "$OUTPUT_DIR/extraction-social-traces.json"
 rm -f "$TMP"
