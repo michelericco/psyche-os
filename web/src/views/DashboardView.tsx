@@ -16,7 +16,9 @@ function getWeekKey(): string {
 
 function computeStreak(): number {
   const stored = localStorage.getItem('psyche-visit-dates')
-  const dates: string[] = stored ? JSON.parse(stored) : []
+  let dates: string[] = []
+  try { dates = stored ? JSON.parse(stored) : [] } catch { /* corrupted */ }
+  if (!Array.isArray(dates)) dates = []
   const today = new Date().toDateString()
   if (!dates.includes(today)) {
     dates.push(today)
@@ -73,7 +75,9 @@ function getStageStatus(score: number, target: number, trendDelta: number): Stag
 
 function countRecentCheckins(days: number): number {
   const raw = localStorage.getItem('psyche-checkins')
-  const items: Array<{ date?: string }> = raw ? JSON.parse(raw) : []
+  let items: Array<{ date?: string }> = []
+  try { items = raw ? JSON.parse(raw) : [] } catch { /* corrupted */ }
+  if (!Array.isArray(items)) items = []
   const now = Date.now()
   const windowMs = days * 24 * 60 * 60 * 1000
   return items.filter((item) => {
@@ -86,7 +90,9 @@ function countRecentCheckins(days: number): number {
 
 function countRecentVisits(days: number): number {
   const raw = localStorage.getItem('psyche-visit-dates')
-  const items: string[] = raw ? JSON.parse(raw) : []
+  let items: string[] = []
+  try { items = raw ? JSON.parse(raw) : [] } catch { /* corrupted */ }
+  if (!Array.isArray(items)) items = []
   const now = Date.now()
   const windowMs = days * 24 * 60 * 60 * 1000
   const unique = [...new Set(items)]

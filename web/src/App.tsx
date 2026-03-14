@@ -17,7 +17,9 @@ function DailyCheckIn({ onDismiss }: { onDismiss: () => void }) {
 
   const handleSubmit = () => {
     const entry = { date: new Date().toISOString(), values }
-    const existing = JSON.parse(localStorage.getItem('psyche-checkins') ?? '[]')
+    let existing: unknown[] = []
+    try { existing = JSON.parse(localStorage.getItem('psyche-checkins') ?? '[]') } catch { /* corrupted */ }
+    if (!Array.isArray(existing)) existing = []
     localStorage.setItem('psyche-checkins', JSON.stringify([...existing, entry]))
     localStorage.setItem('psyche-checkin-date', new Date().toDateString())
     setSubmitted(true)
