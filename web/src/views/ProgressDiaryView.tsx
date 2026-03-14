@@ -28,9 +28,29 @@ export default function ProgressDiaryView() {
     const saved = localStorage.getItem('progressDiary')
     if (saved) {
       try {
-        setDiary(JSON.parse(saved))
+        const parsed: unknown = JSON.parse(saved)
+        if (!parsed || typeof parsed !== 'object') throw new Error('invalid diary payload')
+
+        const payload = parsed as Partial<ProgressDiary>
+        const entries = Array.isArray(payload.entries)
+          ? payload.entries.filter((entry): entry is DailyEntry => {
+              if (!entry || typeof entry !== 'object') return false
+              const candidate = entry as Partial<DailyEntry>
+              return (
+                typeof candidate.date === 'string' &&
+                typeof candidate.title === 'string' &&
+                typeof candidate.content === 'string'
+              )
+            })
+          : []
+
+        setDiary({
+          entries,
+          lastUpdated: typeof payload.lastUpdated === 'string' ? payload.lastUpdated : undefined,
+        })
       } catch (e) {
         console.error('Failed to load diary', e)
+        localStorage.removeItem('progressDiary')
       }
     }
   }, [])
