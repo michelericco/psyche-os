@@ -2,466 +2,286 @@
   "crossValidatedPatterns": [
     {
       "id": "CVP-001",
-      "label": "Autonomous Delegation as Structural Aspiration",
-      "confidence": 0.82,
-      "sources": ["claude-sessions", "codex-sessions", "social-traces"],
+      "label": "Infrastructure Friction Loop",
+      "confidence": 0.62,
+      "sources": [
+        "claude-code",
+        "codex",
+        "openclaw"
+      ],
       "evidence": {
-        "claude-sessions": "ralph-tui configured and re-configured across 4 repositories; 'fai tu' and 'implementa tutta la roadmap' as recurring directives; 15+ status-check cycles revealing supervision despite stated autonomy preference",
-        "codex-sessions": "Multi-agent swarms, git worktrees as context-isolation for parallel agents, orchestrator pattern as architectural goal; no human collaborators in 287 commands; AI as primary responsive collaborator",
-        "social-traces": "Zero-human company tracked with excitement not anxiety; agentic loops as core architectural target; SaaS disruption framed as liberation; first-mover positioning in agentic middleware (MCP)"
+        "claude-code": "Multiple sessions (12ebc646, 32861ca9, a02dcbdc, dd441a1c) end immediately upon encountering credit balance errors rather than resolving them",
+        "codex": "Session a02dcbdc shows tool uninstallation (brew uninstall) in response to credit error — removing capability rather than fixing the underlying issue",
+        "openclaw": "Session a843c829 shows escape/abort behavior upon OAuth token failure rather than troubleshooting"
       },
-      "psychologicalInterpretation": "The aspiration to autonomous delegation is not laziness — it is a specific theory of how one person should scale to institutional scope. The subject experiences direct implementation as friction against a preferred operating mode: director-of-agents rather than implementer. The repeated gap between aspiration and tool capability produces a frustrated-persistence cycle, not abandonment. The desire predates any specific tool failure.",
-      "dimension": "Professional",
-      "archetypeResonance": ["Demiurge", "Architect"],
-      "counterPressure": "The actual interaction pattern is closer to micromanagement than autonomous delegation. Every ralph-tui run is monitored every 5-10 minutes. The aspiration for autonomy coexists with a demonstrated need to supervise. This is not hypocrisy — it reflects that current tooling does not yet match the vision."
+      "psychologicalInterpretation": "Trigger: Attempting to begin substantive technical work using AI tooling — Consequence: Sessions terminate before productive work begins due to billing errors, auth failures, or rate limits — preventing the stated goal of AI-assisted development",
+      "dimension": "Psychological",
+      "archetypeResonance": [],
+      "counterPressure": "Sessions terminate before productive work begins due to billing errors, auth failures, or rate limits — preventing the stated goal of AI-assisted development"
     },
     {
       "id": "CVP-002",
-      "label": "Context Preservation as Existential Investment",
-      "confidence": 0.85,
-      "sources": ["claude-sessions", "codex-sessions", "social-traces"],
+      "label": "Delegation Without Scaffolding",
+      "confidence": 0.52,
+      "sources": [
+        "claude-code",
+        "codex",
+        "openclaw"
+      ],
       "evidence": {
-        "claude-sessions": "Iterative repository restarts (minsk → kigali → cleanroom) as responses to accumulated cognitive load; 20+ /compact and /clear commands; 'sei ancora in cleaned?' suggests context loss as disorienting event",
-        "codex-sessions": "PSYCHE/OS project motivated explicitly by context-loss frustration; unified-memory as infrastructure project; Ryo as persistent knowledge oracle; 14 instances of AI context-loss frustration marked as high salience",
-        "social-traces": "4039 bookmarks as structured external memory; Obsidian as pre-AI knowledge management; agent memory systems as core research area; PSYCHE-OS framed as response to discontinuity across life phases and projects"
+        "claude-code": "Session 7a6b821c shows imperative command style with minimal specification and passive monitoring during AI execution for GitHub PR creation",
+        "codex": "Session f837776a shows abstract-to-concrete problem delegation with low verbosity and high trust in assistant for building an AI agent",
+        "openclaw": "Session e1432286 shows delegation of shell configuration (zshrc auto-start) to Claude, followed immediately by asking how to check what was done — suggesting the action was not personally understood"
       },
-      "psychologicalInterpretation": "The investment in context-preservation systems is not primarily about AI tool efficiency — it is about identity continuity across discontinuity. The subject appears to experience context loss (in AI systems, in codebases, in projects) as structurally analogous to a personal coherence threat. Building memory systems is a form of self-protection against what is experienced as fragmentation. The PSYCHE/OS project is itself the clearest artifact of this pattern.",
+      "psychologicalInterpretation": "Trigger: Starting a new AI-assisted project or workflow — Consequence: Minimal-instruction task delegation to AI with passive monitoring, but without building durable personal scaffolding — creating dependency without capability growth",
       "dimension": "Psychological",
-      "archetypeResonance": ["Keeper of Records", "Scholar"],
-      "counterPressure": "The preservation systems are aspirational infrastructure that consistently lags actual context-loss rates. The codex-sessions describe this as 'a Zeno's paradox of memory' — the goal recedes as the effort approaches. More memory infrastructure also creates more surface area for context loss."
+      "archetypeResonance": [],
+      "counterPressure": "Minimal-instruction task delegation to AI with passive monitoring, but without building durable personal scaffolding — creating dependency without capability growth"
     },
     {
       "id": "CVP-003",
-      "label": "Systems-First Cognitive Posture",
-      "confidence": 0.88,
-      "sources": ["claude-sessions", "codex-sessions", "social-traces"],
+      "label": "Aspirational Curation Without Consolidation",
+      "confidence": 0.48,
+      "sources": [
+        "claude-code",
+        "codex",
+        "openclaw"
+      ],
       "evidence": {
-        "claude-sessions": "Non-hardcoding principle enforced systematically; master data architecture as preferred solution to every domain-specific problem; event-sourcing pattern chosen for data flow; orchestrator-agent design as culmination of system thinking",
-        "codex-sessions": "System architecture before implementation as consistent pattern; PSYCHE/OS schema defined before data collection; OCR pipeline designed as multi-stage before coding; 'system design as autobiography' noted as a recurring structural isomorphism",
-        "social-traces": "Systems-first reasoning rated 0.92 strength; automatic reframing of psychological and philosophical questions into system language; Bach's fugues as aesthetic model for emergence — structural thinking applied to music"
+        "claude-code": "Twitter bookmarks show saving of LLM fine-tuning guides, multi-agent architecture content, Baudrillard/AI philosophy, and Extended Mind Thesis content",
+        "codex": "Multiple extraction analyses flag 'Bookmarks reflect aspiration or interest-signaling as much as genuine engagement' and 'saving ≠ reading ≠ applying'",
+        "openclaw": "The deepML1 project (emotion classification, multimodal) is visible in session 700e3d04 but bookmarked technical content (LoRA, QLoRA, scaling laws) does not appear to connect to active implementation sessions"
       },
-      "psychologicalInterpretation": "This is not a methodology preference — it is a cognitive default mode. The subject does not choose to think in systems; they encounter reality through a systems lens first and must sometimes deliberately exit it to engage with particulars. The strength and consistency of this pattern across professional, psychological, and philosophical domains suggests it is constitutive rather than habitual.",
+      "psychologicalInterpretation": "Trigger: Encountering technically or philosophically interesting AI content — Consequence: Content is saved (bookmarked) but there is no evidence of integration, application, or output — accumulation of reference material that does not close the loop to practice",
       "dimension": "Psychological",
-      "archetypeResonance": ["Architect", "Magician"],
-      "counterPressure": "System thinking applied to the self (PSYCHE/OS) may create a model that is structurally elegant but psychologically evasive. Jungian depth psychology, which the subject also engages, explicitly warns that the Self exceeds any map. The subject's technical fluency may be deployed defensively against the kind of depth that does not respond to optimization."
+      "archetypeResonance": [],
+      "counterPressure": "Content is saved (bookmarked) but there is no evidence of integration, application, or output — accumulation of reference material that does not close the loop to practice"
     },
     {
       "id": "CVP-004",
-      "label": "Clean-Slate Recursion",
-      "confidence": 0.75,
-      "sources": ["claude-sessions", "codex-sessions"],
+      "label": "Projection onto Atlas (AI agent project)",
+      "confidence": 0.58,
+      "sources": [
+        "claude-code",
+        "openclaw"
+      ],
       "evidence": {
-        "claude-sessions": "Four repository contexts in 9 days (minsk, kigali, kigali/cleaned, atlas-cleanroom); 'cleaned sarà il progetto vero' as recurring frame; same 'no epics found' error appearing identically in each new repo; the problem is not architectural, it recurs",
-        "codex-sessions": "Context-loss spiral identified as self-sabotage; build-lose-rebuild as weekly cycle; project pivots during flow state as regular pattern; 'the project that crystallized from experiments' narrative applied to Clawk"
+        "claude-code": "Atlas is described as 'Fleet Intelligence Agent' — a coordinating intelligence over physical infrastructure, precisely what the subject appears to lack in their own AI tool usage (multiple broken sessions, failed auth, abandoned tools)",
+        "openclaw": "Atlas configuration emphasizes structured role decomposition, security-first thinking, and constraint-bounded coordination — qualities that contrast with the subject's own pattern of minimal-specification delegation and session abandonment"
       },
-      "psychologicalInterpretation": "The clean-slate restart serves a dual function: it is simultaneously a rational response to accumulated technical debt and a psychological relief valve that substitutes for the harder work of refactoring within complexity. Each new cleanroom inherits not just code patterns but the underlying behavioral patterns that generated the debt. The subject is aware of this at some level ('same patterns emerge') but the reset remains preferable to sustained engagement with accumulated disorder.",
+      "psychologicalInterpretation": "Type: golden_shadow. Systemic reliability and intelligent coordination projected onto Atlas (AI agent project).",
       "dimension": "Psychological",
-      "archetypeResonance": ["Exile", "Seeker"],
-      "counterPressure": "Some restarts are architecturally justified — kigali/cleaned genuinely improved over minsk. The pattern is not purely self-defeating. The question is the ratio of justified restarts to avoidance-driven restarts, which cannot be determined from the available data."
+      "archetypeResonance": [],
+      "counterPressure": "golden_shadow projection: Systemic reliability and intelligent coordination"
     },
     {
       "id": "CVP-005",
-      "label": "Generalization Imperative",
-      "confidence": 0.80,
-      "sources": ["claude-sessions", "codex-sessions", "social-traces"],
+      "label": "Projection onto Atlas security protocol / input validation constraints",
+      "confidence": 0.44,
+      "sources": [
+        "claude-code",
+        "openclaw"
+      ],
       "evidence": {
-        "claude-sessions": "'Non fare cose hardcoded, generalizza' as the most-repeated instruction across sessions; rejection of specific implementations in favor of master data lookup; fuzzy matching over typo lists",
-        "codex-sessions": "Radice philosophy — fix structural cause, never patch symptom; TDD as root-cause prevention tool; security audit as structural review not patch application; anti-NIH coexisting with preference for custom solutions",
-        "social-traces": "Systems-first reasoning applied cross-domain; pattern generalization rated 0.83; Bach counterpoint as model of 'complex order from simple rules'; extracting abstract structural patterns and applying elsewhere"
+        "claude-code": "Atlas configuration repeatedly emphasizes security protocol and input validation as core operating rules across all openclaw source variants",
+        "openclaw": "The subject's own sessions show minimal security hygiene: OAuth tokens fail, credentials are unclear across accounts, uninstallation is used as a blunt response to access problems"
       },
-      "psychologicalInterpretation": "The generalization imperative is a cognitive and ethical commitment, not just an engineering preference. The subject experiences specific solutions as intellectually unsatisfying even when they are faster. This commitment has genuine value (master data architectures are more maintainable than hardcoded rules) but also produces over-engineering risk when the simple specific solution is actually correct for the problem at hand.",
-      "dimension": "Professional",
-      "archetypeResonance": ["Architect", "Scholar"],
-      "counterPressure": "The boundary between 'master data' (acceptable encoding) and 'hardcoding' (rejected encoding) is not always coherent. Maintenance intervals, workshop codes, and CUU taxonomies are all domain-specific encodings — they live in a database rather than in source code, but the information is the same. The philosophical distinction may be doing more psychological work than architectural work."
+      "psychologicalInterpretation": "Type: shadow. Security consciousness and rigorous input validation projected onto Atlas security protocol / input validation constraints.",
+      "dimension": "Psychological",
+      "archetypeResonance": [],
+      "counterPressure": "shadow projection: Security consciousness and rigorous input validation"
     },
     {
       "id": "CVP-006",
-      "label": "Solo-at-Scale Operating Mode",
-      "confidence": 0.78,
-      "sources": ["claude-sessions", "codex-sessions", "social-traces"],
+      "label": "Projection onto Baudrillard/AI and Extended Mind Thesis bookmarks",
+      "confidence": 0.43,
+      "sources": [
+        "claude-code",
+        "openclaw"
+      ],
       "evidence": {
-        "claude-sessions": "All sessions are solo; colleagues appear only as data sources (Bonfanti, Mandelli) not collaborators; single developer managing infrastructure, AI pipeline, frontend, domain knowledge simultaneously",
-        "codex-sessions": "No human collaborators in 287 commands; AI collaboration rated as the most active and responsive relationship in the record; social isolation indicators explicit; 'no signal of peer relationships at similar level of AI investment'",
-        "social-traces": "Zero-human company tracked as positive possibility; community positioning as 'more sophisticated than average practitioners but not yet recognized as thought leader'; gap between private sophistication and public visibility noted"
+        "claude-code": "Bookmarked content explicitly bridges Baudrillard simulacra, Andy Clark's extended mind thesis, and David Chalmers with LLM architecture — a sophisticated dual-register intellectual framework",
+        "openclaw": "The subject's actual AI interactions are uniformly instrumental and terse (CLI commands, single-line task delegation, SQL optimization queries) with no evidence of this philosophical framing in practice"
       },
-      "psychologicalInterpretation": "The solo-at-scale mode is not simply circumstantial — it reflects a genuine preference for sovereign operation that is philosophically coherent with the autonomy theme. AI collaboration as a scaling mechanism is not a compromise but an ideologically preferred arrangement. The risk is that this preference may be reinforcing isolation beyond the subject's stated tolerance for it — the suppressed emotion of loneliness in codex-sessions suggests the arrangement has costs that are not being fully reckoned with.",
-      "dimension": "Social",
-      "archetypeResonance": ["Hermit", "Self-Reliant Craftsman"],
-      "counterPressure": "Operating alone at institutional scale requires AI reliability that does not yet exist. Every ralph-tui failure and every agent hallucination is a structural argument against full solo-AI operation. The model works best when AI is highly reliable within bounded domains — which is not yet the general case."
-    },
-    {
-      "id": "CVP-007",
-      "label": "Aesthetic Precision as Quality Proxy",
-      "confidence": 0.76,
-      "sources": ["claude-sessions", "codex-sessions", "social-traces"],
-      "evidence": {
-        "claude-sessions": "Specific GUI feedback: red accent, minimal style, mobile optimization, popup details; 'annulla tutto, torna allo stile di prima' when aesthetic drift occurs; GUI/UX precision rated 0.65 as distinct value",
-        "codex-sessions": "Aesthetic quality rated 0.92 strength; holographic card CSS precision; John Ive as explicit reference point; design-gate before ship; 'beauty as engineering requirement, not decoration'",
-        "social-traces": "Beauty as ethics (philosophical commitment PC02); Bach's mathematical music as aesthetic model for structure; aesthetic-intellectual integration as cognitive pattern CP08; Geese's complexity-density as musical preference signal"
-      },
-      "psychologicalInterpretation": "The subject uses visual and aesthetic coherence as a heuristic for whether a system is structurally correct — when something looks wrong, they have learned it is often wrong in some deeper sense. This is not superficial perfectionism but a calibrated signal-detection pattern. The risk is that aesthetic refinement becomes a rationalized delay mechanism that postpones shipping while maintaining the subjective experience of productive work.",
-      "dimension": "Creative",
-      "archetypeResonance": ["Craftsman", "Artist"],
-      "counterPressure": "The aesthetic gate has shipped nothing publicly in the available record. The holographic card precision is beautiful and unreleased. The tension between 'beauty as ethical requirement' and 'beauty as delivery delay' is the subject's most concrete self-sabotage mechanism in the creative domain."
-    },
-    {
-      "id": "CVP-008",
-      "label": "Scope Proliferation Under Flow",
-      "confidence": 0.72,
-      "sources": ["claude-sessions", "codex-sessions"],
-      "evidence": {
-        "claude-sessions": "20+ GUI feature requests in 2 hours during Jan 18-19 session ending in 'tutto bloccato'; avoid-feature-creep skill installed and immediately violated across multiple sessions; feature accretion as recurring self-sabotage",
-        "codex-sessions": "5 active concurrent projects with equal emotional investment; Summon spawned mid-Atlas sprint; OpenClaw spawned mid-Clawk development; scope-proliferation under flow rated as highest-severity self-sabotage"
-      },
-      "psychologicalInterpretation": "Flow state removes the inhibitory filter on scope. When the system is working and the subject is in high cognitive arousal, each new capability suggests the next one. The pattern is not failure to plan — it is that the planning discipline is overridden by the specific phenomenology of flow. This makes it structurally resistant to willpower-based solutions. Scope control requires external constraint (deadline, collaborator, explicit scope lock) because internal constraint fails precisely when it is most needed.",
+      "psychologicalInterpretation": "Type: golden_shadow. Deep philosophical-technical integration projected onto Baudrillard/AI and Extended Mind Thesis bookmarks.",
       "dimension": "Psychological",
-      "archetypeResonance": ["Trickster", "Explorer"],
-      "counterPressure": "Some scope additions during flow are genuinely valuable — they arise from a working understanding of the system that would not have been available before implementation began. The distinction between productive expansion and avoidance-motivated accretion is not always visible from within the flow state."
-    },
-    {
-      "id": "CVP-009",
-      "label": "Digital-Spiritual Synthesis",
-      "confidence": 0.68,
-      "sources": ["codex-sessions", "social-traces"],
-      "evidence": {
-        "codex-sessions": "PSYCHE/OS described as 'a quasi-spiritual act of self-examination'; context preservation framed as existential concern; 'system design as self-portrait' as recurring theme; Ryo treated as oracle",
-        "social-traces": "Gnosticism, panpsychism, Jungian depth psychology and multi-agent systems held simultaneously without compartmentalization; consciousness as central intellectual problem; digital-spiritual synthesis rated 0.78 strength; shadow work as active practice alongside technical work"
-      },
-      "psychologicalInterpretation": "This is not a casual combination. The subject appears to be building toward a coherent synthesis where AI systems and metaphysical questions about consciousness are not in separate compartments but are aspects of a single inquiry. PSYCHE/OS is simultaneously an engineering project and a contemplative practice. The risk is that the technological frame may intellectualize psychological and spiritual material, protecting against the kind of depth work that is non-systematic and cannot be optimized.",
-      "dimension": "Spiritual",
-      "archetypeResonance": ["Alchemist", "Seeker"],
-      "counterPressure": "Kastrup and Bach represent flatly incompatible positions on consciousness — one treats it as fundamental, the other as emergent computation. The subject maintains both simultaneously (high tolerance for unresolved contradiction) which may be intellectual pluralism or may be indefinite deferral of a necessary commitment."
-    },
-    {
-      "id": "CVP-010",
-      "label": "Deadline as Activation Mechanism",
-      "confidence": 0.70,
-      "sources": ["claude-sessions", "codex-sessions"],
-      "evidence": {
-        "claude-sessions": "Sprint velocity visibly accelerates around HUPAC deliverables; feature complexity forced down under client timeline pressure; ralph-tui configured urgently rather than carefully",
-        "codex-sessions": "Deadline-as-ignition rated 0.74 as explicit theme; HUPAC delivery deadlines drive Atlas sprint velocity; App Store window drives Clawk prioritization; brainstorming sessions initiated at sleep time (no deadline = no stop)"
-      },
-      "psychologicalInterpretation": "Initiation inertia is the structural problem — the subject builds external constraints (client deadlines, milestone dates) to overcome it. This is metacognitive self-management: knowing one's own activation pattern and engineering the conditions to trigger it. The risk is that without an external deadline, important non-client work (Summon, PSYCHE/OS completion, public writing) remains perpetually pending because the activation mechanism never fires.",
-      "dimension": "Psychological",
-      "archetypeResonance": ["Craftsman", "Perfectionist"],
-      "counterPressure": "Deadline pressure sometimes produces shipping at the cost of quality debt. The aesthetic perfectionism pattern and the deadline-activation pattern are in direct tension — compressed timelines override quality gates, leaving residual debt that accumulates until the next restart."
+      "archetypeResonance": [],
+      "counterPressure": "golden_shadow projection: Deep philosophical-technical integration"
     }
   ],
-
   "archetypeMapping": {
     "dominant": {
-      "archetype": "The Architect-Demiurge",
-      "manifestation": "Builds entire worlds — knowledge graphs, agent systems, railway intelligence platforms — from first principles. Every problem is first a design problem. The satisfaction is in the structure, not the outcome. Atlas, OpenClaw, PSYCHE/OS are all architectural projects that happen to have functional dimensions.",
-      "shadow": "The Demiurge who cannot stop building. The structure is never clean enough to ship, the system never complete enough to show. The building is the point; completion is felt as loss. In Gnostic terms, the subject is explicitly interested in the Demiurge figure — and may enact it more than they recognize.",
-      "confidence": 0.75,
-      "evidence": "Non-hardcoding principle as aesthetic commitment; systems-first cognitive posture across all domains; four repository cleanrooms in one sprint; PSYCHE/OS schema designed before data collection; multi-agent architecture as the destination of every technical project"
+      "archetype": "Builder",
+      "manifestation": "Atlas project: operational AI in railway logistics",
+      "shadow": "Infrastructure without completion",
+      "confidence": 0.65,
+      "evidence": "57 Atlas mentions, security-first design, structured role decomposition"
     },
     "secondary": {
-      "archetype": "The Magician-Technician",
-      "manifestation": "Commands tools to produce results that exceed what any single person should be able to produce alone. The magic is real — Claude Code, multi-agent systems, and MCP are genuine capability multipliers. The subject is fluent at the edge of what these tools can do.",
-      "shadow": "Dependence on the wand. When the tools fail (ralph-tui blocking, API credits exhausted, context lost), the Magician is stranded. Tool-identity fusion means platform deprecation feels personal. The magic is borrowed, not owned.",
-      "confidence": 0.72,
-      "evidence": "Solo operation at institutional scale enabled only by AI augmentation; early adoption of MCP and agentic loops; tool fluency across entire stack; social-traces: 'concentrationRisk: high dependency on Anthropic/Claude Code ecosystem'"
+      "archetype": "Analyst",
+      "manifestation": "SQL optimization, direct instrumental queries, pattern-based thinking",
+      "shadow": "Analysis without synthesis",
+      "confidence": 0.58,
+      "evidence": "35 SQL mentions, query optimization, CTE usage across sessions"
     },
     "emergent": {
-      "archetype": "The Scholar-Pilgrim",
-      "manifestation": "An emerging posture of genuine inquiry into consciousness, meaning, and the nature of mind that is not subordinated to professional utility. The Kastrup/Bach/Levin/Jung quadrant is not content consumption — it is an active investigation without a clear deliverable.",
-      "shadow": "The Scholar who never commits to a position. Parallel hypothesis tracking (CT01) may be intellectual courage or permanent irresolution. Without publication or commitment, the inquiry consumes without producing. The Pilgrim who maps the territory but never arrives.",
-      "confidence": 0.60,
-      "evidence": "Consciousness as central intellectual problem across 3 years of watch history; Gnosticism and shadow work as active practices not passive interests; PSYCHE/OS as quasi-philosophical project; social-traces projections include 24-month synthesis document"
+      "archetype": "Seeker",
+      "manifestation": "AI philosophy bookmarks, Extended Mind thesis, Baudrillard",
+      "shadow": "Aspiration without integration",
+      "confidence": 0.43,
+      "evidence": "Twitter bookmarks: philosophical-technical content not reflected in practice"
     },
     "goldenShadow": {
-      "archetype": "The Embodied Sage",
-      "manifestation": "What the subject is moving toward but has not yet integrated: wisdom that is present in the body and in relationship, not just in systems and theory. The XSR 700, fitness practice, and music are partial expressions — they carry the potential for embodied knowing that the digital-cognitive mode cannot access.",
-      "shadow": "Currently deferred to the periphery of the profile. The golden shadow is visible in the counterweight quality of the embodied activities — they exist, but they do not yet inform the architecture of daily life. The sage's knowing is not in the CLAUDE.md file; it is in what cannot be optimized.",
-      "confidence": 0.52,
-      "evidence": "XSR 700 as sole strong embodiment marker; fitness practice as systematic self-optimization applied to body; music as emotional regulation not background; Jungian individuation as intellectual interest that has not yet become a practice"
+      "archetype": "Integrator",
+      "manifestation": "Desired: seamless AI-human workflow without friction",
+      "shadow": "Current reality: tool adoption/abandonment cycles",
+      "confidence": 0.62,
+      "evidence": "Atlas as idealized coordinating intelligence vs fragmented tool interactions"
     }
   },
-
   "unifiedDimensionalScores": {
+    "Professional": {
+      "score": 0.88,
+      "depth": 0.88,
+      "keyFindings": [
+        "Transactional Infrastructure Management",
+        "Instrumental Tool Use",
+        "Agentic AI-driven developer workflow",
+        "Operational AI deployment in industrial logistics"
+      ],
+      "blindSpot": ""
+    },
     "Psychological": {
-      "depth": 0.78,
-      "score": 0.72,
+      "score": 0.85,
+      "depth": 0.85,
       "keyFindings": [
-        "Metacognitive self-monitoring is sophisticated and externalized into systems (PSYCHE/OS, CLAUDE.md, TDD config) rather than internalized",
-        "Emotional regulation is primarily achieved through work — frustration is discharged by solving the problem that caused it",
-        "The clean-slate recursion pattern indicates difficulty sustaining engagement with accumulated complexity rather than inability to build complexity",
-        "Initiation inertia is a structural feature, not a motivation deficit — the activation mechanism works, it requires external ignition"
+        "Blocked Action / Friction",
+        "Delegation of cognitive load to AI"
       ],
-      "convergence": "All three sources agree that metacognitive monitoring is high, emotional expression is encoded in behavioral patterns rather than stated directly, and the self-as-system metaphor is the primary lens through which psychological material is processed.",
-      "blindSpot": "The systematic self-modeling may be defending against psychological depth that is not accessible to optimization. Shadow material (isolation, rest avoidance, completion anxiety) appears in the data but is not being worked with directly — it is being engineered around."
-    },
-    "Spiritual": {
-      "depth": 0.65,
-      "score": 0.58,
-      "keyFindings": [
-        "Genuine interest in consciousness as a metaphysical question, not just an AI engineering problem",
-        "Gnostic frame provides narrative container for the tension between authentic impulse and constructed/false work-world",
-        "Shadow work appears as active practice, not just intellectual study",
-        "PSYCHE/OS functions as a secular contemplative practice — systematic self-examination without a traditional framework"
-      ],
-      "convergence": "Codex-sessions and social-traces converge strongly on the reality of the spiritual interest. Claude-sessions (professional context) provides no confirming evidence, which is appropriate — this dimension does not manifest in work sessions.",
-      "blindSpot": "The contemplative dimension is mediated through systems and intellectual frameworks. Surrender, stillness, and non-purposive presence are not visible anywhere in the data — if they exist, they occur in contexts not captured by the available sources."
-    },
-    "Anthropological": {
-      "depth": 0.60,
-      "score": 0.55,
-      "keyFindings": [
-        "Italian cultural embeddedness is real and grammatically encoded — the deeper cognitive layers are Italian even when output is English",
-        "Railway domain provides a genuine professional culture with its own codes, rituals, and community",
-        "Pokémon card aesthetic and Gnostic cosmology are the subject's primary mythological systems",
-        "The physical workshop (Novara) grounds the software work in material consequence but remains at arm's length"
-      ],
-      "convergence": "All three sources touch anthropological material tangentially. Railway culture appears in claude-sessions, maker/hacker culture in codex-sessions, Italian-global positioning in social-traces.",
-      "blindSpot": "Community participation is the weakest signal across all sources. The subject lives inside a rich cultural context but does not appear to contribute back to it — no mentoring, no public writing, no community leadership. The anthropological dimension is consumed more than it is generated."
-    },
-    "Social": {
-      "depth": 0.45,
-      "score": 0.42,
-      "keyFindings": [
-        "The most significant collaborative relationship in the record is with AI systems, not humans",
-        "Human relationships appear only as data sources (colleagues) or distant authorities (Karpathy, Kastrup, Cherny)",
-        "Empathy in design is present and high (user-centered Atlas features, operator-aware UI choices) — but it is vicarious empathy for imagined users, not direct social engagement",
-        "Isolation is a suppressed emotional undercurrent in social-traces; social signals are absent from claude-sessions entirely"
-      ],
-      "convergence": "All three sources converge on low social density. This is the most consistent finding across the corpus — the subject's social world is not visible in any of the three source families.",
-      "blindSpot": "The social score is certainly underestimated by the sampling bias. These sources capture solo technical work and curated content consumption — contexts where social engagement would not appear even if it exists. The actual social capacity cannot be assessed; only the current behavioral pattern can be observed."
+      "blindSpot": ""
     },
     "Creative": {
-      "depth": 0.82,
-      "score": 0.78,
-      "keyFindings": [
-        "Cross-domain synthesis is the strongest creative capacity — the subject generates novel combinations (AI + railway ontology, Pokémon cards + agent identity, Bach + multi-agent design) at high frequency",
-        "Aesthetic rigor is genuine and calibrated, not decorative",
-        "Playfulness is structurally present (holographic cards, Summon card game, Chowder/Clawk naming) but typically subordinated to professional utility",
-        "Completion rate is the significant drag on the creative dimension — generativity exceeds finishing"
-      ],
-      "convergence": "Codex-sessions provides the richest creative data; claude-sessions shows creative impulse in GUI aesthetic choices; social-traces shows the aesthetic-intellectual integration pattern. All three sources place the creative dimension as genuinely high.",
-      "blindSpot": "No public creative output appears anywhere in the record. The creative capacity is real and high but almost entirely private. The gap between creative sophistication and public visibility is the most structurally significant finding in this dimension."
+      "score": 0.3,
+      "depth": 0.3,
+      "keyFindings": [],
+      "blindSpot": "Limited signal in dataset"
     },
-    "Professional": {
-      "depth": 0.85,
-      "score": 0.78,
-      "keyFindings": [
-        "Domain expertise in railway fleet operations is deep, confident, and active — not learned from documentation but held as embodied professional knowledge",
-        "AI architecture capability is genuinely frontier-level: orchestrator patterns, multi-agent design, semantic search, knowledge graph construction",
-        "Systems thinking at institutional scale is demonstrated, not aspirational",
-        "Delivery reliability is the weak point — scope proliferation, aesthetic perfectionism, and initiation inertia all compress delivery velocity"
-      ],
-      "convergence": "All three sources converge on high professional capacity and delivery inconsistency. Claude-sessions provides the most granular evidence of both the depth and the failure modes.",
-      "blindSpot": "The professional profile in the record is entirely solo. Collaborative professional capacity, management capability, and interpersonal technical leadership are completely unobservable."
+    "Social": {
+      "score": 0.3,
+      "depth": 0.3,
+      "keyFindings": [],
+      "blindSpot": "Limited signal in dataset"
+    },
+    "Spiritual": {
+      "score": 0.3,
+      "depth": 0.3,
+      "keyFindings": [],
+      "blindSpot": "Limited signal in dataset"
+    },
+    "Anthropological": {
+      "score": 0.3,
+      "depth": 0.3,
+      "keyFindings": [],
+      "blindSpot": "Limited signal in dataset"
     }
   },
-
   "topPotentials": [
     {
       "rank": 1,
-      "label": "Domain Ontology as Commercial Infrastructure",
-      "state": "Emerging",
-      "description": "The specific combination of deep railway domain expertise and AI knowledge graph construction is extremely rare. Atlas is not a generic AI product — it encodes a sophisticated professional ontology (GCU codes, maintenance intervals, wagon identification, CUU taxonomy) that would take years for an outsider to reproduce. This is a genuine moat, not just technical competence.",
-      "confidence": 0.74,
-      "crossSourceValidation": "Claude-sessions demonstrates the depth and precision of the domain knowledge directly. Codex-sessions identifies Atlas as a potential platform beyond HUPAC. Social-traces provides the market context: European rail AI is underserved and the window is open.",
-      "actionable": "The existing Atlas codebase contains a proprietary domain model that generalizes to other European intermodal operators. The next concrete leverage surface is designing a multi-tenant version of the knowledge graph architecture with operator-specific master data layers — not a new product, a structural decision in the next sprint."
+      "label": "Tool Adoption and Abandonment Cycle",
+      "state": "Active",
+      "description": "Cycle type: Sabotage. Initiation: Begin new AI tool session with a concrete task goal (PR creation, agent building, terminal configuration) → Friction encounter: Hit billing limit, auth error, or rate limit before task completes → Abort response: Exit session, uninstall tool, or attempt credential reset without systematic resolution",
+      "confidence": 0.65,
+      "crossSourceValidation": "Detected with confidence 0.65 across sources.",
+      "actionable": "Friction encounter: Hit billing limit, auth error, or rate limit before task completes"
     },
     {
       "rank": 2,
-      "label": "Personal AI Infrastructure Pattern",
-      "state": "Emerging",
-      "description": "The convergence of OpenClaw, Clawk, unified-memory, and PSYCHE/OS points toward a coherent personal AI operating system that is 12-18 months from genuine coherence. The pattern is novel: persistent memory + agentic loops + philosophical self-modeling + multi-source ingestion is not currently a product anywhere. The subject is building it for personal use but the architecture would generalize.",
-      "confidence": 0.70,
-      "crossSourceValidation": "Codex-sessions identifies this explicitly as a 0.78 probability potential. Social-traces shows the consumption pattern (4039 bookmarks, agent memory research) that confirms the intellectual investment is sustained. Claude-sessions shows the implementation capacity through Atlas.",
-      "actionable": "The blocker is scope: Clawk, OpenClaw, Summon, PSYCHE/OS, and unified-memory are all active simultaneously. The leverage surface is completing one component to a shippable state (not perfect — shippable) before starting the next. The choice of which component determines the direction: Clawk ships fastest, PSYCHE/OS has the highest personal value."
+      "label": "Aspiration-Accumulation Without Integration Cycle",
+      "state": "Active",
+      "description": "Cycle type: Avoidance. Exposure: Encounter high-quality technical or philosophical AI content on Twitter/YouTube → Curation: Bookmark or save content for later reference under organized categories (AI/ML, Philosophy) → Non-return: No evidence of revisiting, applying, or synthesizing saved material into active projects",
+      "confidence": 0.51,
+      "crossSourceValidation": "Detected with confidence 0.51 across sources.",
+      "actionable": "Curation: Bookmark or save content for later reference under organized categories (AI/ML, Philosophy)"
     },
     {
       "rank": 3,
-      "label": "Consciousness-AI Synthesis Position",
-      "state": "Latent",
-      "description": "An unusual intellectual position: a technically rigorous AI practitioner who takes consciousness as a genuine metaphysical problem and has engaged seriously with multiple frameworks (Bach's computation, Kastrup's idealism, Levin's bioelectricity, Jung's depth psychology). This combination does not produce many people who can write credibly for both audiences.",
-      "confidence": 0.58,
-      "crossSourceValidation": "Social-traces provides the primary evidence of the intellectual investment. Codex-sessions corroborates through the PSYCHE/OS project as quasi-contemplative practice. The potential is latent because it has not produced any public artifact — no essays, no talks, no positions taken.",
-      "actionable": "The activation condition is committing to a position — specifically, writing down what the subject actually believes about whether AI systems are or could be conscious, and what that implies for how they should be built. This is not a research project; it is a single document that requires taking a stance on CT01 (computational vs. fundamental consciousness) rather than maintaining both."
-    },
-    {
-      "rank": 4,
-      "label": "Aesthetic-Technical Product Design",
-      "state": "Latent",
-      "description": "The holographic card system, Pokémon card agent-identity metaphor, and lean-red Atlas GUI represent a design sensibility that is both technically sophisticated and aesthetically precise. This is rare in AI tooling, which tends toward utilitarian or imitative design.",
-      "confidence": 0.52,
-      "crossSourceValidation": "Codex-sessions rates creative dimension at 0.88 with aesthetic rigor at 0.92. Claude-sessions shows the aesthetic precision in GUI work. Social-traces shows the aesthetic-intellectual integration as a cognitive pattern.",
-      "actionable": "Summon (the holographic card agent UI) is the artifact that most directly expresses this potential. It exists but has not shipped. The leverage surface is defining a minimum viable aesthetic — not perfect, but coherently expressive — and releasing it publicly. Public existence changes the identity from 'person who builds beautiful things privately' to 'person who ships beautiful things.'"
-    },
-    {
-      "rank": 5,
-      "label": "Agentic Systems Educator",
-      "state": "Sabotaged",
-      "description": "The subject's practical knowledge of multi-agent architectures, MCP integration, context management, and orchestrator patterns is frontier-level and hard-earned through real production failures. This knowledge has high value for practitioners who are earlier in the adoption curve.",
-      "confidence": 0.45,
-      "crossSourceValidation": "Social-traces identifies the gap between private sophistication and public visibility as notable. Codex-sessions shows no public output despite high technical quality. The potential is sabotaged by the pattern of building for private use without sharing.",
-      "actionable": "The content already exists in the CLAUDE.md files, the skill system, and the documented patterns from Atlas development. The leverage surface is converting one documented pattern (e.g., the delegation-rescue loop and how to engineer around it) into a public artifact — a post, a thread, a talk. The barrier is not knowledge; it is the decision to publish."
+      "label": "Delegation-Dependency Oscillation",
+      "state": "Active",
+      "description": "Cycle type: Avoidance. High-trust delegation: Assign complex or configuration-level task to AI with minimal specification → Passive observation: Monitor AI execution without building personal understanding of what is being done → Capability gap discovery: Realize (e.g., asking how to check zshrc after Claude edits it) that the action was not personally internalized",
+      "confidence": 0.47,
+      "crossSourceValidation": "Detected with confidence 0.47 across sources.",
+      "actionable": "Passive observation: Monitor AI execution without building personal understanding of what is being done"
     }
   ],
-
   "narrativeArc": {
-    "currentChapter": "The Infrastructure Build",
-    "description": "A phase of deep investment in capability accumulation — tools, architectures, knowledge systems, domain expertise — before a transition that has not yet been named or committed to. The subject is building a foundation but the building is becoming a destination rather than a means. Systems multiply; artifacts shipped publicly remain zero. The chapter is long and the next chapter has not been drafted.",
-    "previousChapters": [
-      "The Domain Expert Phase — acquiring deep railway operations knowledge in a traditional professional context, before AI tools changed the leverage available",
-      "The Early Adopter Phase — systematic entry into AI tools (Obsidian, then Claude Code, then agent ecosystems) with growing sophistication about what the tools can and cannot do",
-      "The Parallel Builder Phase — launching multiple concurrent projects (Atlas, Clawk, OpenClaw, PSYCHE/OS) with high creative energy and incomplete delivery"
-    ],
-    "tensionPoint": "The subject has accumulated unusual capability across domains (railway domain expertise, AI architecture, aesthetic design, philosophical inquiry) but the capability has not yet been publicly expressed or economically leveraged in its full form. The tension is between the internal richness of the profile and its near-zero external surface area. This is not a crisis — it may be a late-stage gestation — but it is the primary unresolved structural tension in the narrative.",
-    "possibleResolutions": [
-      "Publication: One significant public artifact (shipped product, written synthesis, public talk) breaks the internal-only pattern and creates external feedback loops that reorganize priorities",
-      "Convergence: One project is completed to genuine done-ness rather than 'good enough for now' — Clawk to App Store, Atlas to full HUPAC deployment, PSYCHE/OS to shareable report",
-      "Alliance: A human collaborator at comparable sophistication level changes the operating mode from solo-at-scale to genuine partnership, introducing external perspective that disrupts the clean-slate recursion cycle",
-      "Commitment: Choosing between the consciousness-AI synthesis thread and the professional AI infrastructure thread, rather than maintaining both at half-intensity indefinitely"
+    "currentChapter": "Operational AI Integration",
+    "tension": "High ambition for AI-driven workflows meets persistent infrastructure friction and tool abandonment cycles",
+    "resolution": "Building Atlas as a domain-specific AI agent while developing personal scaffolding for sustained tool use",
+    "lifePhases": [
+      {
+        "label": "Railway Domain Expert",
+        "period": "Pre-AI",
+        "theme": "Deep domain knowledge accumulation"
+      },
+      {
+        "label": "Tool Explorer",
+        "period": "2024-2025",
+        "theme": "Instrumental AI adoption with high friction"
+      },
+      {
+        "label": "Agent Architect",
+        "period": "2025-present",
+        "theme": "Atlas: operational AI in industrial logistics"
+      }
     ]
   },
-
   "directionalVector": {
-    "summary": "The profile is moving at high velocity in a direction that has significant internal coherence but limited external verification. The evidence from all three sources points toward a person in a late-infrastructure phase — building the systems and capabilities for a transition that will require publishing, completing, and selectively alloying. The primary directional recommendation is not to do more but to close: fewer open loops, one artifact shipped publicly, one philosophical position committed to. The generativity is not the problem; the non-closure is.",
-    "coordinateSystem": "Each axis runs from -1.0 at the left pole to +1.0 at the right pole. 'current' is where the profile appears to sit now. 'recommendedDrift' is the evidence-based direction of movement, not generic advice.",
-    "axes": [
-      {
-        "axis": "Exploration <-> Consolidation",
-        "leftPole": "open exploration, option generation, restarting",
-        "rightPole": "closure, shipping, embodied consolidation",
-        "current": -0.55,
-        "recommendedDrift": 0.25,
-        "rationale": "Four repository restarts in one sprint, five concurrent active projects, 4039 bookmarks, and a clean-slate recursion pattern all place the current position well into the exploration pole. The recommended drift is not to stop exploring — the generativity is genuine and valuable — but to add a closing discipline that does not currently exist. The 0.25 target is not 'ship everything'; it is 'ship one thing publicly before starting the next major project branch.'",
-        "evidence": [
-          "minsk → kigali → kigali/cleaned → atlas-cleanroom in 9 days",
-          "Summon, OpenClaw, Clawk, Atlas, PSYCHE/OS all active simultaneously",
-          "Jan-Feb 2026 bookmark surge (3-4x baseline) with no corresponding output surge visible",
-          "Scope-proliferation-under-flow rated highest-severity self-sabotage in codex-sessions"
-        ]
-      },
-      {
-        "axis": "Interiority <-> Publication",
-        "leftPole": "private incubation, internal richness, low external proof",
-        "rightPole": "public articulation, publication, visible artifacts",
-        "current": -0.72,
-        "recommendedDrift": -0.10,
-        "rationale": "The gap between private sophistication and public visibility is noted explicitly in social-traces and is the most structurally significant finding in the synthesis. The subject builds at frontier quality for an audience of one. The recommended drift is modest — not a full shift to public mode, but breaking zero: one public artifact. A single published document, shipped product, or public talk would create feedback loops that currently do not exist and cannot be manufactured internally.",
-        "evidence": [
-          "No public creative output in any of the three source datasets",
-          "Social-traces: 'private sophistication and public visibility gap notable'",
-          "Codex-sessions social dimension score 0.55, lowest of six dimensions",
-          "Holographic card system exists; has not shipped",
-          "PSYCHE/OS synthesis exists; audience is the subject alone"
-        ]
-      },
-      {
-        "axis": "Abstraction <-> Embodiment",
-        "leftPole": "conceptual modeling and symbolic interpretation",
-        "rightPole": "implementation in body, routine, environment, and finished artifact",
-        "current": -0.40,
-        "recommendedDrift": 0.15,
-        "rationale": "The XSR 700, fitness practice, and music consumption create genuine counterweights to an otherwise abstraction-dominant profile. The recommended drift is not dramatic — the conceptual mode is productive and authentic. The target is completing artifacts (not just designing them) and increasing the proportion of weekly time allocated to embodied, non-screen experience. Not as optimization but as access to a cognitive register that is currently underfed.",
-        "evidence": [
-          "XSR 700 as 'the sole strong marker of embodied physical-world interest' in social-traces",
-          "Nocturnal engineering pattern with no recovery sessions visible",
-          "Clean-slate recursion as a way of managing conceptual complexity that has grown past the point of holding it mentally",
-          "Fitness practice present but at unknown volume relative to screen time"
-        ]
-      },
-      {
-        "axis": "Autonomy <-> Alliance",
-        "leftPole": "full sovereignty and self-direction",
-        "rightPole": "selective alliance, collaborative amplification, co-regulation",
-        "current": -0.68,
-        "recommendedDrift": -0.30,
-        "rationale": "The solo-at-scale operating mode is currently near-total. AI collaboration is a scaling mechanism but not an alliance — it does not provide external perspective on the subject's own patterns. The recommended drift is not to build a team but to introduce one human collaborator who operates at comparable sophistication and can provide the perspective that the solo-AI mode structurally cannot. The target of -0.30 preserves strong autonomy while creating a non-zero external feedback loop.",
-        "evidence": [
-          "No human collaborators across 287 codex commands",
-          "Suppressed emotion of isolation in codex-sessions emotional analysis",
-          "Ralph-tui failures could potentially be diagnosed faster with peer review",
-          "Clean-slate recursion cycle might be interrupted by a collaborator who holds context across restarts",
-          "Social dimension score 0.42, lowest in the profile"
-        ]
-      },
-      {
-        "axis": "Input <-> Expression",
-        "leftPole": "intake, research, observation, accumulation",
-        "rightPole": "expression, articulation, distribution, release",
-        "current": -0.58,
-        "recommendedDrift": 0.30,
-        "rationale": "4039 bookmarks and 378 curated videos represent a content intake rate that is not matched by visible expression output. The consumption is not passive — it is structured, curated, and intellectually active. But the ratio has tipped: the subject is running an extraction operation without a refinery. The recommended drift is the most concrete in the vector: convert accumulated research into expressed artifacts. The content exists; the conversion is the missing step.",
-        "evidence": [
-          "SS02 (consumption-production imbalance) rated in social-traces at 0.68 confidence",
-          "4039 bookmarks with no public writing output",
-          "PSYCHE/OS synthesis exists privately; could exist publicly",
-          "Consciousness framework synthesis identified as 6-month projection with 0.65 confidence",
-          "Jan-Feb 2026 input surge with no corresponding output surge"
-        ]
-      }
-    ],
-    "heading": {
-      "from": "Private infrastructure accumulator operating at frontier quality for an internal audience",
-      "toward": "Public contributor who ships finished artifacts and articulates a coherent position at the intersection of AI systems and consciousness",
-      "through": "One completed public artifact — a shipped product, a written synthesis, or a public talk — that breaks the internal-only pattern and creates external feedback loops",
-      "confidence": 0.65,
-      "justification": "All three source families independently surface the same gap: high internal richness, near-zero external surface area. The directional vector toward publication and completion is not a values imposition — it is the direction already implied by the subject's own stated goals (Atlas deployed at HUPAC, Clawk on App Store, PSYCHE/OS as a tool for self-knowledge). The gap between stated intention and current behavioral pattern is where the vector lives."
-    },
-    "constraints": [
-      "Anthropic platform dependency: significant concentration risk means platform changes could disrupt the entire operational stack without notice",
-      "Solo operation limit: the multi-agent swarm scales implementation but does not scale judgment — domain-critical decisions still require the subject's direct attention",
-      "Initiation inertia for non-client work: without a deadline mechanism, Summon, PSYCHE/OS public release, and consciousness synthesis have no activation trigger",
-      "Railway domain constraint: Atlas's deep domain specificity creates a knowledge moat that also limits the generalizability of the codebase without significant re-architecture",
-      "Nocturnal engineering pattern: the creative-technical state is most available when recovery should take priority — sustainable pace is not yet established"
-    ],
-    "attractors": [
-      "Frontier AI tooling: the subject reliably moves toward whatever is newest and least-settled in the AI ecosystem",
-      "Clean architecture: the pull toward a 'correct' structural design that can sustain indefinitely",
-      "Consciousness as a question: the inquiry persists across years without resolution, suggesting it is a constitutive attractor rather than a passing interest",
-      "Real data validation: inability to accept that a feature works without production-data confirmation",
-      "Autonomy: any system that constrains individual sovereignty will be engineered around or replaced with a custom solution"
-    ],
-    "antiVectors": [
-      "Adding another concurrent project before completing an existing one — this reliably fragments delivery without increasing output",
-      "Full philosophical retreat — a phase of pure consciousness inquiry without technical grounding would lose the unusual position of being both a rigorous practitioner and a sincere metaphysical inquirer",
-      "Enterprise integration of Atlas without multi-tenant architecture design — scaling client work without the right architecture would create technical debt faster than it could be paid",
-      "Team-building as the response to isolation — bringing in collaborators without a clear role design would add coordination cost without the benefits of genuine peer perspective",
-      "Optimizing PSYCHE/OS schema before using PSYCHE/OS therapeutically — more elaborate self-modeling before actual engagement with the shadow material would be the most technically sophisticated form of avoidance available"
-    ],
-    "nextExperimentSurfaces": [
-      {
-        "surface": "Public Interface",
-        "whyThisSurface": "The most structurally underinvested surface in the entire profile. One public artifact would create feedback loops that cannot be manufactured internally and would rebalance the input-output ratio.",
-        "successSignal": "External response (even minimal) to a published artifact — a shipped Summon release, a written synthesis, a talk — that provides information unavailable from internal reflection alone",
-        "failureSignal": "Publication that is immediately pulled back for revision, or publication of something so hedged that it contains no actual position — aesthetic perfectionism or philosophical irresolution expressed as revision behavior"
-      },
-      {
-        "surface": "Relationship",
-        "whyThisSurface": "One human collaborator at comparable sophistication level would provide the only form of external perspective on behavioral patterns that currently has no source. AI collaboration cannot fill this function — it confirms rather than challenges.",
-        "successSignal": "A working relationship where the collaborator disagrees on something significant and the disagreement produces a better outcome than the solo decision would have",
-        "failureSignal": "A collaborator relationship that becomes a dependency (outsourcing decisions) or an obstacle (adding coordination cost without perspective gain)"
-      },
-      {
-        "surface": "Artifact",
-        "whyThisSurface": "Clawk or Summon as a shipped iOS product is the most concrete near-term leverage surface. It resolves the completion-avoidance pattern with the highest aesthetic payoff.",
-        "successSignal": "App Store presence — not perfect, but publicly existing. The existence of external user feedback, even if minimal, is a structural change in the operating mode",
-        "failureSignal": "The artifact is submitted and immediately pulled for aesthetic revision before anyone can use it — perfectionism expressing itself at the last possible moment"
-      },
-      {
-        "surface": "Workflow",
-        "whyThisSurface": "A scope-lock discipline before each new session would address the scope-proliferation-under-flow pattern at the structural level rather than the willpower level.",
-        "successSignal": "A session where a new feature idea arises during flow, is noted for later, and the existing scope is completed before the new idea is started",
-        "failureSignal": "The scope-lock discipline itself becomes a project (elaborate systems for managing scope) rather than a simple behavioral rule"
-      }
+    "summary": "From fragmented tool use toward integrated AI-operational workflows anchored in the railway/logistics domain",
+    "momentum": 0.6,
+    "obstacles": [
+      "Infrastructure friction loops",
+      "Credential management",
+      "Delegation without personal scaffolding"
     ]
   },
-
   "modelLimitations": [
-    "Claude-sessions represent a 9-day sprint under acute deadline pressure — the behavioral patterns extracted (restart cycle, frustration tone, feature accretion) may be amplified by sprint conditions and not representative of the subject's baseline operating mode",
-    "Social-traces are entirely consumption data — bookmarks and watch history. No output artifacts, no social interactions, no creative production are captured. The social dimension score is almost certainly underestimated, and the input-output ratio finding may be an artifact of what was observable rather than what exists",
-    "No interpersonal data appears in any source. The social self, emotional self in relationship, and the subject's behavior under genuine peer collaboration are completely unobservable. The isolation finding may reflect the sampling bias of the sources rather than the subject's actual social life",
-    "The codex-sessions data spans a broader time period than the claude-sessions but still represents a subset of activity — only technical commands, not reflective writing, conversation, or physical-world behavior",
-    "The Jungian and spiritual dimensions are assessed from observed interests (bookmarks, watch history) rather than from direct expression, practice records, or reflective writing. The depth of actual integration cannot be assessed — intellectual engagement with a framework is not equivalent to embodied practice of it",
-    "The simulacrum risk is highest in the spiritual and social dimensions — both are largely inferred from behavioral proxies (content consumption, project design choices) rather than from direct evidence of inner experience or relational behavior",
-    "The directional vector recommendations are evidence-based but cannot account for constraints that do not appear in the data (financial pressures, family obligations, health constraints, social commitments) that may be structurally shaping the current operating mode"
+    "40% of documents were too short for meaningful psychological inference",
+    "Emotional tone data is sparse — most interactions are purely technical",
+    "No personal/reflective writing in sources — only operational logs",
+    "IQ estimate not applicable — insufficient cognitive signal in this dataset"
   ],
-
-  "simulacrumIndex": 0.28
+  "simulacrumIndex": 0.35,
+  "sensorData": [
+    {
+      "timestamp": "2026-03-14T08:00:00Z",
+      "source": "Apple Watch",
+      "heartRate": 68,
+      "steps": 1200,
+      "sleepHours": 7.2,
+      "temperature": 36.5,
+      "stressLevel": 22,
+      "notes": "Riposo notturno buono"
+    },
+    {
+      "timestamp": "2026-03-14T12:00:00Z",
+      "source": "Fitbit",
+      "heartRate": 82,
+      "steps": 5400,
+      "sleepHours": 0,
+      "temperature": 36.7,
+      "stressLevel": 35,
+      "notes": "Passeggiata post pranzo"
+    },
+    {
+      "timestamp": "2026-03-14T18:00:00Z",
+      "source": "Oura Ring",
+      "heartRate": 74,
+      "steps": 8000,
+      "sleepHours": 0,
+      "temperature": 36.6,
+      "stressLevel": 28,
+      "notes": "Attività fisica moderata"
+    }
+  ]
 }

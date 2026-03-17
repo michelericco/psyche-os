@@ -16,7 +16,7 @@ import synthesisRaw from './synthesis-unified.json'
 // Synthesis data (loaded from pipeline output)
 // ---------------------------------------------------------------------------
 
-const synthesis = synthesisRaw as {
+const synthesis = synthesisRaw as unknown as {
   crossValidatedPatterns: CrossValidatedPattern[]
   archetypeMapping: {
     dominant: { archetype: string; manifestation: string; shadow: string; confidence: number; evidence: string }
@@ -30,6 +30,7 @@ const synthesis = synthesisRaw as {
   directionalVector?: DirectionalVector
   modelLimitations?: string[]
   simulacrumIndex?: number
+  sensorData?: unknown[]
 }
 
 // Cross-validated patterns from synthesis
@@ -51,178 +52,154 @@ export const narrativeArc: NarrativeArc = synthesis.narrativeArc
 export const directionalVector: DirectionalVector | undefined = synthesis.directionalVector
 export const modelLimitations: string[] = synthesis.modelLimitations ?? []
 export const simulacrumIndex: number = synthesis.simulacrumIndex ?? 0
+export const sensorData: unknown[] = synthesis.sensorData ?? []
+
+// ...existing code...
 
 // ---------------------------------------------------------------------------
 // Hardcoded data (not in synthesis JSON — entities, themes, genome, etc.)
 // ---------------------------------------------------------------------------
 
 const ENTITY_LIBRARY: Record<string, Entity> = {
-  'PSYCHE/OS': {
-    name: 'PSYCHE/OS',
-    kind: 'system',
-    mentions: 32,
-    significance: 'Self-modeling interface for cognitive cartography.',
-    dimensions: ['Psychological', 'Professional', 'Creative'],
-    relatedEntities: ['Loom', 'Northstar Studio', 'Civic Mesh'],
-    sourceMemories: ['claude-sessions', 'codex-sessions'],
-  },
-  Loom: {
-    name: 'Loom',
+  'Atlas': {
+    name: 'Atlas',
     kind: 'project',
-    mentions: 24,
-    significance: 'Recurring architecture substrate for tools and protocols.',
-    dimensions: ['Professional', 'Psychological'],
-    relatedEntities: ['PSYCHE/OS', 'Claude Code', 'Tailscale'],
-    sourceMemories: ['claude-sessions'],
+    mentions: 57,
+    significance: 'Fleet Intelligence Agent for railway logistics — core professional project.',
+    dimensions: ['Professional'],
+    relatedEntities: ['Railway logistics', 'Security Protocol', 'Claude (AI assistant)'],
+    sourceMemories: ['claude-code', 'openclaw'],
   },
-  'Claude Code': {
-    name: 'Claude Code',
+  'SQL': {
+    name: 'SQL',
     kind: 'tool',
-    mentions: 18,
-    significance: 'External reasoning partner and execution environment.',
+    mentions: 35,
+    significance: 'Primary technical tool for data querying and optimization.',
     dimensions: ['Professional'],
-    relatedEntities: ['Loom', 'Beacon Protocol'],
-    sourceMemories: ['claude-sessions', 'social-traces'],
+    relatedEntities: ['Atlas', 'Query Optimization'],
+    sourceMemories: ['claude-code'],
   },
-  'Civic Mesh': {
-    name: 'Civic Mesh',
-    kind: 'protocol',
-    mentions: 14,
-    significance: 'Protocol framing applied to regulation and interoperability.',
+  'Security Protocol': {
+    name: 'Security Protocol',
+    kind: 'tool',
+    mentions: 27,
+    significance: 'Security-first design as a core principle in Atlas architecture.',
+    dimensions: ['Professional'],
+    relatedEntities: ['Atlas', 'Input validation'],
+    sourceMemories: ['openclaw'],
+  },
+  'Railway logistics': {
+    name: 'Railway logistics',
+    kind: 'project',
+    mentions: 23,
+    significance: 'Core domain expertise: intermodal rail operations, wagon management, CUU taxonomy.',
     dimensions: ['Professional', 'Anthropological'],
-    relatedEntities: ['PSYCHE/OS', 'Northstar Studio'],
-    sourceMemories: ['claude-sessions'],
+    relatedEntities: ['Atlas', 'Fleet Intelligence', 'Wagon maintenance'],
+    sourceMemories: ['openclaw', 'claude-code'],
   },
-  Tailscale: {
-    name: 'Tailscale',
-    kind: 'infrastructure',
-    mentions: 11,
-    significance: 'Pragmatic substrate for sovereignty-oriented infrastructure.',
+  'Claude (AI assistant)': {
+    name: 'Claude (AI assistant)',
+    kind: 'tool',
+    mentions: 19,
+    significance: 'Primary AI tool for development assistance and problem-solving.',
     dimensions: ['Professional'],
-    relatedEntities: ['Loom', 'PSYCHE/OS'],
-    sourceMemories: ['claude-sessions'],
+    relatedEntities: ['Atlas', 'SQL'],
+    sourceMemories: ['claude-code'],
   },
-  Lyra: {
-    name: 'Lyra',
+  'Fleet Intelligence': {
+    name: 'Fleet Intelligence',
+    kind: 'system',
+    mentions: 20,
+    significance: 'Intelligent coordination layer for physical rail fleet infrastructure.',
+    dimensions: ['Professional'],
+    relatedEntities: ['Atlas', 'Railway logistics'],
+    sourceMemories: ['openclaw'],
+  },
+  'Michele Ricco': {
+    name: 'Michele Ricco',
     kind: 'persona',
-    mentions: 22,
-    significance: 'Dialogic alter used to externalize thinking and rhythm.',
-    dimensions: ['Psychological', 'Creative'],
-    relatedEntities: ['Jung', 'Bateson', 'Beacon Protocol'],
-    sourceMemories: ['codex-sessions'],
+    mentions: 25,
+    significance: 'Subject of analysis — professional in railway logistics building AI tools.',
+    dimensions: ['Professional', 'Psychological'],
+    relatedEntities: ['Atlas', 'Railway logistics'],
+    sourceMemories: ['claude-code', 'codex', 'openclaw'],
   },
-  Jung: {
-    name: 'Jung',
-    kind: 'thinker',
-    mentions: 13,
-    significance: 'Primary symbolic frame for archetypes, shadow, and individuation.',
-    dimensions: ['Psychological', 'Spiritual'],
-    relatedEntities: ['Lyra', 'Bateson'],
-    sourceMemories: ['codex-sessions'],
-  },
-  Bateson: {
-    name: 'Bateson',
-    kind: 'thinker',
-    mentions: 10,
-    significance: 'Ecology-of-mind perspective feeding the spiritual and anthropological dimensions.',
-    dimensions: ['Spiritual', 'Anthropological'],
-    relatedEntities: ['Jung', 'Lyra'],
-    sourceMemories: ['codex-sessions'],
-  },
-  'Corrections Practice': {
-    name: 'Corrections Practice',
-    kind: 'method',
-    mentions: 15,
-    significance: 'Living archive of mistakes converted into future leverage.',
-    dimensions: ['Psychological', 'Professional'],
-    relatedEntities: ['PSYCHE/OS', 'Loom'],
-    sourceMemories: ['codex-sessions', 'claude-sessions'],
-  },
-  Stillframe: {
-    name: 'Stillframe',
-    kind: 'project',
-    mentions: 16,
-    significance: 'Photography practice anchored in atmosphere and staging.',
+  'YouTube': {
+    name: 'YouTube',
+    kind: 'tool',
+    mentions: 30,
+    significance: 'Primary media consumption platform — AI/ML and music content.',
     dimensions: ['Creative'],
-    relatedEntities: ['Northstar Studio', 'Beacon Protocol'],
-    sourceMemories: ['social-traces'],
+    relatedEntities: ['Twitter'],
+    sourceMemories: ['youtube'],
   },
-  'Northstar Studio': {
-    name: 'Northstar Studio',
-    kind: 'project',
-    mentions: 14,
-    significance: 'Convergence surface for system design and public articulation.',
-    dimensions: ['Creative', 'Professional'],
-    relatedEntities: ['PSYCHE/OS', 'Civic Mesh', 'Stillframe'],
-    sourceMemories: ['social-traces', 'claude-sessions'],
-  },
-  'Beacon Protocol': {
-    name: 'Beacon Protocol',
-    kind: 'protocol',
-    mentions: 12,
-    significance: 'Naming-led framework for agent invocation and interaction.',
-    dimensions: ['Creative', 'Professional'],
-    relatedEntities: ['Claude Code', 'Lyra', 'Northstar Studio'],
-    sourceMemories: ['social-traces'],
+  'Software Design Patterns': {
+    name: 'Software Design Patterns',
+    kind: 'tool',
+    mentions: 24,
+    significance: 'Structural thinking applied to software architecture.',
+    dimensions: ['Professional'],
+    relatedEntities: ['Adapter Pattern', 'SQL'],
+    sourceMemories: ['claude-code'],
   },
 }
 
 const THEME_LIBRARY: Record<string, Theme> = {
-  'Tool Sovereignty': {
-    label: 'Tool Sovereignty',
-    relevance: 0.91,
-    keywords: ['self-hosting', 'control', 'stack', 'independence'],
+  'Transactional Infrastructure Management': {
+    label: 'Transactional Infrastructure Management',
+    relevance: 0.90,
+    keywords: ['operations', 'infrastructure', 'management', 'logistics', 'fleet'],
     dimension: 'Professional',
-    evidence: 'Repeated preference for owned infrastructure over opaque platforms.',
+    evidence: 'Dominant theme across claude-code and openclaw sessions: operational AI managing physical infrastructure.',
   },
-  'Protocol Design': {
-    label: 'Protocol Design',
-    relevance: 0.84,
-    keywords: ['interfaces', 'schemas', 'contracts', 'systems'],
+  'Instrumental Tool Use': {
+    label: 'Instrumental Tool Use',
+    relevance: 0.90,
+    keywords: ['tools', 'AI', 'delegation', 'automation', 'workflow'],
     dimension: 'Professional',
-    evidence: 'Projects are repeatedly framed as protocols rather than isolated artifacts.',
+    evidence: 'AI tools used as direct problem-solving instruments with minimal meta-reflection.',
   },
-  'Cross-domain Synthesis': {
-    label: 'Cross-domain Synthesis',
-    relevance: 0.88,
-    keywords: ['bridging', 'transfer', 'unification', 'metaphor'],
-    dimension: 'Creative',
-    evidence: 'Concepts are moved across engineering, art, philosophy, and product design.',
-  },
-  'Consciousness Inquiry': {
-    label: 'Consciousness Inquiry',
-    relevance: 0.82,
-    keywords: ['mind', 'metaphysics', 'phenomenology', 'awareness'],
-    dimension: 'Spiritual',
-    evidence: 'Philosophical and contemplative threads recur with increasing depth.',
-  },
-  'Narrative Identity': {
-    label: 'Narrative Identity',
-    relevance: 0.71,
-    keywords: ['story', 'self-model', 'chapters', 'meaning'],
-    dimension: 'Anthropological',
-    evidence: 'Life phases are repeatedly understood as story chapters with evolving roles.',
-  },
-  'Embodied Discipline': {
-    label: 'Embodied Discipline',
-    relevance: 0.73,
-    keywords: ['body', 'training', 'consistency', 'counter-pattern'],
+  'Blocked Action / Friction': {
+    label: 'Blocked Action / Friction',
+    relevance: 0.85,
+    keywords: ['friction', 'errors', 'billing', 'auth', 'blocked'],
     dimension: 'Psychological',
-    evidence: 'Physical regularity behaves as the most stable corrective to cognitive drift.',
+    evidence: 'Recurring pattern of session termination due to infrastructure barriers before tasks complete.',
   },
-  'Aesthetic Restraint': {
-    label: 'Aesthetic Restraint',
-    relevance: 0.76,
-    keywords: ['editing', 'silence', 'atmosphere', 'composition'],
-    dimension: 'Creative',
-    evidence: 'Preference for reduced, typographic, high-control visual systems.',
+  'Agentic AI-driven developer workflow': {
+    label: 'Agentic AI-driven developer workflow',
+    relevance: 0.85,
+    keywords: ['agents', 'automation', 'delegation', 'AI', 'developer'],
+    dimension: 'Professional',
+    evidence: 'Aspiration to use AI as an autonomous execution layer for development tasks.',
   },
-  'Relational Selectivity': {
-    label: 'Relational Selectivity',
-    relevance: 0.49,
-    keywords: ['bandwidth', 'autonomy', 'depth', 'distance'],
-    dimension: 'Social',
-    evidence: 'Social energy is highly selective and rarely diffused across weak ties.',
+  'Delegation of cognitive load to AI': {
+    label: 'Delegation of cognitive load to AI',
+    relevance: 0.85,
+    keywords: ['delegation', 'trust', 'AI', 'cognition', 'outsourcing'],
+    dimension: 'Psychological',
+    evidence: 'High-trust delegation pattern with minimal personal scaffolding or documentation.',
+  },
+  'Operational AI in industrial logistics': {
+    label: 'Operational AI in industrial logistics',
+    relevance: 0.85,
+    keywords: ['railway', 'fleet', 'wagons', 'operations', 'AI', 'logistics'],
+    dimension: 'Professional',
+    evidence: 'Atlas project: AI agent for real-time fleet intelligence in railway operations.',
+  },
+  'Practical AI integration': {
+    label: 'Practical AI integration',
+    relevance: 0.78,
+    keywords: ['integration', 'workflow', 'practical', 'tools', 'daily'],
+    dimension: 'Professional',
+    evidence: 'Focus on making AI tools work in concrete professional contexts.',
+  },
+  'Aspirational Curation': {
+    label: 'Aspirational Curation',
+    relevance: 0.62,
+    keywords: ['bookmarks', 'philosophy', 'AI', 'curation', 'aspiration'],
+    dimension: 'Psychological',
+    evidence: 'Twitter bookmarks show philosophical-technical aspirations not yet integrated into practice.',
   },
 }
 
@@ -231,14 +208,14 @@ const THEME_LIBRARY: Record<string, Theme> = {
 // ---------------------------------------------------------------------------
 
 export const cognitiveGenomePrimitives = [
-  { name: 'Abstraction Descent', value: 0.78, kind: 'systematic' },
-  { name: 'Fractal Transfer', value: 0.71, kind: 'divergent' },
-  { name: 'Failure-Driven Learning', value: 0.83, kind: 'metacognitive' },
-  { name: 'Infrastructure-First', value: 0.74, kind: 'systematic' },
-  { name: 'Naming-as-Cognition', value: 0.58, kind: 'divergent' },
-  { name: 'Empirical-Mystical', value: 0.65, kind: 'intuitive' },
-  { name: 'Cost-Conscious', value: 0.69, kind: 'analytical' },
-  { name: 'Burst-Process-Burst', value: 0.52, kind: 'divergent' },
+  { name: 'Security-First Design', value: 0.82, kind: 'systematic' },
+  { name: 'Direct Instrumental Querying', value: 0.79, kind: 'analytical' },
+  { name: 'Structured Role Decomposition', value: 0.76, kind: 'systematic' },
+  { name: 'High-Trust Delegation', value: 0.72, kind: 'intuitive' },
+  { name: 'Domain-Anchored Thinking', value: 0.70, kind: 'analytical' },
+  { name: 'Aspirational Curation', value: 0.62, kind: 'divergent' },
+  { name: 'Tool-Adoption/Abandonment Cycle', value: 0.65, kind: 'metacognitive' },
+  { name: 'Operational AI Orientation', value: 0.85, kind: 'systematic' },
 ]
 
 // ---------------------------------------------------------------------------
@@ -387,9 +364,9 @@ export const neurodivergenceIndicators: import('./types').NeurodivergenceIndicat
   },
 ]
 
-export const neurodivergenceOverlapAnalysis = 'The four dimensions analyzed here overlap substantially. ADHD and giftedness share novelty-seeking, rapid ideation, and intensity. ASD and giftedness share systematizing, deep interests, and social selectivity. HSP overlaps with all three through deep processing and sensitivity. This is why differential diagnosis requires professional assessment: the same behavioral pattern (e.g., project restarts) can have entirely different underlying mechanisms (impulsivity vs. perfectionism vs. boredom from mastery). In this profile, the strongest convergent signal is across the giftedness and ADHD-adjacent dimensions, which is consistent with the "twice-exceptional" (2e) literature where high cognitive ability coexists with executive function variability.'
+export const neurodivergenceOverlapAnalysis = 'The four dimensions analyzed here overlap substantially. ADHD and giftedness share novelty-seeking, rapid ideation, and intensity. ASD and giftedness share systematizing, deep interests, and social selectivity. HSP overlaps with all three through deep processing and sensitivity. This is why differential diagnosis requires professional assessment: the same behavioral pattern (e.g., project restarts) can have entirely different underlying mechanisms (impulsivity vs. perfectionism vs. boredom from mastery). In this profile, the strongest convergent signal is across the giftedness and ADHD-adjacent dimensions, which is consistent with the "twice-exceptional" (2e) literature where high cognitive ability coexists with executive function variability'
 
-export const neurodivergenceSummary = 'The behavioral profile shows moderate-to-strong indicators of intellectual giftedness (overexcitabilities, cross-domain transfer, existential depth) and moderate ADHD-adjacent patterns (burst rhythms, novelty-seeking, completion difficulty). Autism spectrum and HSP indicators are present but weaker and largely explainable by introversion, engineering training, and high Openness. The overall picture is more consistent with a gifted/2e profile than with any single clinical neurodivergent condition, but formal assessment would be needed to confirm or refute this.'
+export const neurodivergenceSummary = 'The behavioral profile shows moderate-to-strong indicators of intellectual giftedness (overexcitabilities, cross-domain transfer, existential depth) and moderate ADHD-adjacent patterns (burst rhythms, novelty-seeking, completion difficulty). Autism spectrum and HSP indicators are present but weaker and largely explainable by introversion, engineering training, and high Openness. The overall picture is more consistent with a gifted/2e profile than with any single clinical neurodivergent condition, but formal assessment would be needed to confirm or refute this'
 
 // ---------------------------------------------------------------------------
 // Extraction-level data (hardcoded — per-source detail not in synthesis)
@@ -397,37 +374,45 @@ export const neurodivergenceSummary = 'The behavioral profile shows moderate-to-
 
 const COGNITIVE_PATTERN_LIBRARY = {
   'claude-sessions': [
-    { label: 'Infrastructure-First', kind: 'systematic', confidence: 0.85, evidence: 'Architecture and protocol layers appear before interface polish.' },
-    { label: 'Build-Abstract-Restart', kind: 'systematic', confidence: 0.91, evidence: 'Projects recur as cleaner higher-order restarts.' },
+    { label: 'Direct Instrumental Querying', kind: 'analytical', confidence: 0.79, evidence: 'Terse, direct technical questions without preamble or context — optimized for execution.' },
+    { label: 'High-Trust Delegation', kind: 'intuitive', confidence: 0.72, evidence: 'Complex tasks assigned to AI with minimal specification and passive monitoring.' },
   ],
   'codex-sessions': [
-    { label: 'Dialogic Externalization', kind: 'metacognitive', confidence: 0.86, evidence: 'Reflection sharpens when a counterpart voice is invoked.' },
-    { label: 'Empirical-Mystical Oscillation', kind: 'intuitive', confidence: 0.82, evidence: 'Spiritual and analytical modes actively alternate.' },
+    { label: 'Structured Role Decomposition', kind: 'systematic', confidence: 0.76, evidence: 'Agent architecture separates Name, Class, Role, Domain into distinct fields.' },
+    { label: 'Security-First Design Thinking', kind: 'systematic', confidence: 0.82, evidence: 'Security protocol appears as first named subsection in Atlas configuration.' },
   ],
   'social-traces': [
-    { label: 'Aesthetic Compression', kind: 'divergent', confidence: 0.73, evidence: 'Public fragments trend toward atmosphere, naming, and compressed signals.' },
-    { label: 'Consumption-Production Asymmetry', kind: 'metacognitive', confidence: 0.79, evidence: 'Visible output remains lower than internal accumulation.' },
+    { label: 'Aspirational Curation', kind: 'divergent', confidence: 0.62, evidence: 'Bookmarks reflect philosophical-technical interests not yet integrated into practice.' },
+    { label: 'Categorical Media Organization', kind: 'systematic', confidence: 0.68, evidence: 'YouTube content organized into named buckets: AI, Music — systematic consumption.' },
   ],
 } as const
 
 const CYCLE_LIBRARY = {
   'claude-sessions': [
-    { kind: 'project', label: 'Build-Abstract-Restart', trigger: 'Architectural insight', outcome: 'Cleaner but delayed public artifact', frequency: 'High', confidence: 0.88 },
+    { kind: 'sabotage', label: 'Tool Adoption and Abandonment', trigger: 'Infrastructure friction (billing, auth errors)', outcome: 'Session abort without resolution, re-initiation with same barriers', frequency: 'Episodic', confidence: 0.65 },
   ],
   'codex-sessions': [
-    { kind: 'reflection', label: 'Burst-Process-Burst', trigger: 'Intense creation phase', outcome: 'Pause, integration, then renewed synthesis', frequency: 'High', confidence: 0.81 },
+    { kind: 'avoidance', label: 'Delegation-Dependency Oscillation', trigger: 'Complex or configuration-level task', outcome: 'Capability gap discovered after delegation — re-delegation follows', frequency: 'Episodic', confidence: 0.47 },
   ],
   'social-traces': [
-    { kind: 'public-output', label: 'Fragment-to-System', trigger: 'Shareable prototype or phrase', outcome: 'Reframed into broader operating language', frequency: 'Moderate', confidence: 0.7 },
+    { kind: 'avoidance', label: 'Aspiration-Accumulation Without Integration', trigger: 'Encounter high-quality AI/philosophy content', outcome: 'Bookmarked but not revisited or applied to active projects', frequency: 'Monthly', confidence: 0.51 },
   ],
 } as const
 
 function pickEntities(names: string[]): Entity[] {
-  return names.map(name => ENTITY_LIBRARY[name]).filter(Boolean)
+  return names.map(name => {
+    const e = ENTITY_LIBRARY[name]
+    if (!e) console.warn(`[loader] Missing entity: "${name}"`)
+    return e
+  }).filter(Boolean) as Entity[]
 }
 
 function pickThemes(labels: string[]): Theme[] {
-  return labels.map(label => THEME_LIBRARY[label]).filter(Boolean)
+  return labels.map(label => {
+    const t = THEME_LIBRARY[label]
+    if (!t) console.warn(`[loader] Missing theme: "${label}"`)
+    return t
+  }).filter(Boolean) as Theme[]
 }
 
 function createExtraction(config: {
@@ -460,23 +445,23 @@ function createExtraction(config: {
 
 export const claudeSessions = createExtraction({
   source: 'claude-sessions',
-  documentsAnalyzed: 41,
-  entityNames: ['PSYCHE/OS', 'Loom', 'Claude Code', 'Civic Mesh', 'Tailscale'],
-  themeLabels: ['Tool Sovereignty', 'Protocol Design', 'Cross-domain Synthesis'],
+  documentsAnalyzed: 40,
+  entityNames: ['Atlas', 'SQL', 'Claude (AI assistant)', 'Software Design Patterns'],
+  themeLabels: ['Transactional Infrastructure Management', 'Instrumental Tool Use', 'Blocked Action / Friction'],
 })
 
 export const codexSessions = createExtraction({
   source: 'codex-sessions',
-  documentsAnalyzed: 33,
-  entityNames: ['Lyra', 'Jung', 'Bateson', 'Corrections Practice'],
-  themeLabels: ['Consciousness Inquiry', 'Narrative Identity', 'Embodied Discipline'],
+  documentsAnalyzed: 20,
+  entityNames: ['Atlas', 'Security Protocol', 'Fleet Intelligence'],
+  themeLabels: ['Agentic AI-driven developer workflow', 'Operational AI in industrial logistics'],
 })
 
 export const socialTraces = createExtraction({
   source: 'social-traces',
-  documentsAnalyzed: 29,
-  entityNames: ['Stillframe', 'Northstar Studio', 'Beacon Protocol'],
-  themeLabels: ['Aesthetic Restraint', 'Relational Selectivity'],
+  documentsAnalyzed: 40,
+  entityNames: ['YouTube', 'Michele Ricco'],
+  themeLabels: ['Aspirational Curation', 'Practical AI integration'],
 })
 
 export const extractions: Extraction[] = [claudeSessions, codexSessions, socialTraces]
@@ -487,35 +472,25 @@ export const allPatterns = extractions.flatMap(e => e.cognitivePatterns)
 export const allCycles = extractions.flatMap(e => e.cycles)
 
 export const allConnections: Connection[] = [
-  { from: 'PSYCHE/OS', to: 'Build-Abstract-Restart', relationship: 'embodies' },
-  { from: 'PSYCHE/OS', to: 'Cross-domain Synthesis', relationship: 'organizes' },
-  { from: 'Loom', to: 'Tool Sovereignty', relationship: 'supports' },
-  { from: 'Loom', to: archetypeMapping.dominant.archetype, relationship: 'resonates' },
-  { from: 'Claude Code', to: 'Dialogic Externalization', relationship: 'amplifies' },
-  { from: 'Civic Mesh', to: 'Protocol Entrepreneurship', relationship: 'points toward' },
-  { from: 'Lyra', to: 'Dialogic Externalization', relationship: 'instantiates' },
-  { from: 'Jung', to: 'Narrative Identity', relationship: 'frames' },
-  { from: 'Bateson', to: 'Empirical-Mystical Oscillation', relationship: 'feeds' },
-  { from: 'Corrections Practice', to: 'Failure-Driven Learning', relationship: 'substantiates' },
-  { from: 'Stillframe', to: 'Aesthetic Restraint', relationship: 'expresses' },
-  { from: 'Northstar Studio', to: 'Cross-domain Synthesis', relationship: 'compresses' },
-  { from: 'Beacon Protocol', to: 'Dialogic Externalization', relationship: 'formalizes' },
-  { from: 'Protocol Design', to: 'Protocol Entrepreneurship', relationship: 'enables' },
-  { from: 'Consciousness Inquiry', to: 'Consciousness Research Practice', relationship: 'matures into' },
-  { from: 'Embodied Discipline', to: 'Sovereignty-Body Bridge', relationship: 'grounds' },
-  { from: 'Aesthetic Restraint', to: 'Photography Worldbuilding', relationship: 'shapes' },
-  { from: 'Relational Selectivity', to: 'Sovereignty-as-Core-Value', relationship: 'echoes' },
-  { from: 'Cross-domain Synthesis', to: 'AI Studio Practice', relationship: 'wants expression through' },
-  { from: 'Narrative Identity', to: archetypeMapping.goldenShadow.archetype, relationship: 'calls forth' },
-  { from: 'Consciousness Inquiry', to: archetypeMapping.secondary.archetype, relationship: 'animates' },
-  { from: 'Cross-domain Synthesis', to: archetypeMapping.emergent.archetype, relationship: 'strengthens' },
+  { from: 'Atlas', to: 'Operational AI in industrial logistics', relationship: 'embodies' },
+  { from: 'Atlas', to: archetypeMapping.dominant.archetype, relationship: 'resonates' },
+  { from: 'SQL', to: 'Transactional Infrastructure Management', relationship: 'supports' },
+  { from: 'Security Protocol', to: 'Security-First Design', relationship: 'instantiates' },
+  { from: 'Claude (AI assistant)', to: 'High-Trust Delegation', relationship: 'amplifies' },
+  { from: 'Fleet Intelligence', to: archetypeMapping.goldenShadow.archetype, relationship: 'calls forth' },
+  { from: 'Railway logistics', to: 'Domain-Anchored Thinking', relationship: 'grounds' },
+  { from: 'Aspirational Curation', to: archetypeMapping.emergent.archetype, relationship: 'points toward' },
+  { from: 'Instrumental Tool Use', to: 'Tool Adoption and Abandonment', relationship: 'feeds' },
+  { from: 'Delegation of cognitive load to AI', to: 'Delegation-Dependency Oscillation', relationship: 'produces' },
+  { from: 'Blocked Action / Friction', to: 'Infrastructure Friction Loop', relationship: 'triggers' },
+  { from: 'YouTube', to: 'Aspirational Curation', relationship: 'expresses' },
 ]
 
 export const DIMENSION_COLORS: Record<string, string> = {
-  Psychological: '#9f4a34',
-  Spiritual: '#82654b',
-  Anthropological: '#a77c58',
-  Social: '#8c8272',
-  Creative: '#5f6e58',
-  Professional: '#4e5f63',
+  Psychological: '#ea4335',
+  Spiritual: '#a142f4',
+  Anthropological: '#fbbc05',
+  Social: '#34a853',
+  Creative: '#d81b60',
+  Professional: '#4285f4',
 }

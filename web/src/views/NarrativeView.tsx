@@ -14,7 +14,7 @@ function extractChapterName(chapter: string): string {
 }
 
 export default function NarrativeView() {
-  const chapters = narrativeArc.previousChapters.map((ch) => ({
+  const chapters = (narrativeArc.previousChapters ?? []).map((ch) => ({
     full: ch,
     name: extractChapterName(ch),
   }))
@@ -125,7 +125,7 @@ export default function NarrativeView() {
           Possible Resolutions
         </h3>
         <div className="space-y-0">
-          {narrativeArc.possibleResolutions.map((resolution, idx) => (
+          {(narrativeArc.possibleResolutions ?? []).map((resolution, idx) => (
             <Expandable
               key={idx}
               title={`${idx + 1}. ${resolution}`}

@@ -10,6 +10,10 @@
     "dev": "tsx watch src/index.ts",
     "analyze": "tsx src/index.ts",
     "sync-prompts": "bash scripts/setup-prompts.sh",
+    "guardrails:check": "bash scripts/guardrails.sh --check-staged",
+    "hooks:install": "bash scripts/install-git-hook.sh --install",
+    "hooks:uninstall": "bash scripts/install-git-hook.sh --uninstall",
+    "hooks:status": "bash scripts/install-git-hook.sh --status",
     "test": "vitest run",
     "validate": "npm run sync-prompts && npm run build && npm --prefix web run check && python3 -m py_compile scripts/create-embeddings.py scripts/search-embeddings.py"
   },
@@ -22,6 +26,7 @@
   },
   "homepage": "https://github.com/michelericco/psyche-os#readme",
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.78.0",
     "zod": "^3.23.0"
   },
   "devDependencies": {
