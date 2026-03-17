@@ -361,3 +361,51 @@ export async function extractBatch(
 
   return results;
 }
+
+/**
+ * Attempt to derive a DocumentPeriod from a SourceDocument's metadata.
+ *
+ * Adapters that store `firstMessage` and `lastMessage` ISO strings in
+ * `document.metadata` (e.g. claude-code, codex) will produce a valid period.
+ * Returns null when the metadata does not contain usable timestamps.
+ *
+ * @param document - The source document to inspect
+ * @returns A DocumentPeriod or null
+ */
+export function deriveDocumentPeriod(
+  document: SourceDocument
+): DocumentPeriod | null {
+  const meta = document.metadata;
+  if (!meta) return null;
+
+  const rawStart =
+    (meta["firstMessage"] as string | undefined) ??
+    (meta["firstTimestamp"] as string | undefined) ??
+    document.timestamp;
+
+  const rawEnd =
+    (meta["lastMessage"] as string | undefined) ??
+    (meta["lastTimestamp"] as string | undefined) ??
+    rawStart;
+
+  if (!rawStart) return null;
+
+  const start = new Date(rawStart);
+  const end = new Date(rawEnd ?? rawStart);
+
+  if (isNaN(start.getTime()) || isNaN(end.getTime())) return null;
+
+  // Ensure start <= end
+  const [s, e] = start <= end ? [start, end] : [end, start];
+
+  const durationDays = Math.max(
+    0,
+    Math.round((e!.getTime() - s!.getTime()) / 86_400_000)
+  );
+
+  return DocumentPeriodSchema.parse({
+    start: s!.toISOString(),
+    end: e!.toISOString(),
+    durationDays,
+  });
+}
